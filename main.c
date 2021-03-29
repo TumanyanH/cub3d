@@ -31,8 +31,7 @@ int main()
     // img = mlx_png_file_to_image(g_values.mlx_ptr, path, &img_width, &img_height);
     // put_circle(center, 50);
     int x = 0;
-    int w = 24;
-    while (x < w)
+    while (x < g_values.screen_width)
     {
         double cameraX = 2 * x / (double)w - 1;
         double rayDirX = dirX + planeX * cameraX;
