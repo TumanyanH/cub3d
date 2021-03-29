@@ -11,8 +11,46 @@ int key_hook(int pressed_key, void *params)
     return 0;
 }
 
+void verLine(int x, int drawStart, int drawEnd, int color)
+{
+    int i = drawStart;
+
+    while (i < drawEnd)
+    {
+        mlx_pixel_put(g_values.mlx_ptr, g_values.mlx_win_ptr, x, i, color);
+        i++;
+    }
+}
+
 int main()
 {
+    int worldMap[24][24]=
+    {
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,2,2,2,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
+        {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,3,0,0,0,3,0,0,0,1},
+        {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,2,2,0,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+    };
     t_coords center;
     void *img;
     double posX = 22, posY = 12;
@@ -33,7 +71,7 @@ int main()
     int x = 0;
     while (x < g_values.screen_width)
     {
-        double cameraX = 2 * x / (double)w - 1;
+        double cameraX = 2 * x / (double)g_values.screen_width - 1;
         double rayDirX = dirX + planeX * cameraX;
         double rayDirY = dirY + planeY * cameraX;
         // double deltaDistX = abs(1 / rayDirX); 
@@ -51,6 +89,8 @@ int main()
         int side;
         double deltaDistX = (rayDirY == 0) ? 0 : ((rayDirX == 0) ? 1 : abs(1 / rayDirX));
         double deltaDistY = (rayDirX == 0) ? 0 : ((rayDirY == 0) ? 1 : abs(1 / rayDirY));
+        double perpWallDist;
+        
         if (rayDirX < 0)
         {
             stepX = -1;
@@ -87,10 +127,36 @@ int main()
                 side = 1;
             }
             //Check if ray has hit a wall
-            if (exampleMap[mapX][mapY] > 0) 
+            if (worldMap[mapX][mapY] > 0) 
                 hit = 1;
+
+            if (side == 0) perpWallDist = (mapX - posX + (1 - stepX) / 2) / rayDirX;
+            else           perpWallDist = (mapY - posY + (1 - stepY) / 2) / rayDirY;
+            
+            int lineHeight = (int)(g_values.screen_height/ perpWallDist);
+
+            //calculate lowest and highest pixel to fill in current stripe
+            int drawStart = -lineHeight / 2 + g_values.screen_height/ 2;
+            if(drawStart < 0)drawStart = 0;
+            int drawEnd = lineHeight / 2 + g_values.screen_height/ 2;
+            if(drawEnd >= g_values.screen_height)drawEnd = g_values.screen_height- 1;
+
+            int color;
+            switch(worldMap[mapX][mapY])
+            {
+                case 1:  color = 0x00FF0000;  break; //red
+                case 2:  color = 0x0000FF00;  break; //green
+                case 3:  color = 0x000000FF;   break; //blue
+                case 4:  color = 0x00FFFFFF;  break; //white
+                default: color = 0x00FFFF00; break; //yellow
+            }
+
+            //give x and y sides different brightness
+            if (side == 1) {color = color / 2;}
+
+            //draw the pixels of the stripe as a vertical line
+            verLine(x, drawStart, drawEnd, color);
         } 
-        double perpWallDist;
         x++;
     }
     mlx_loop(g_values.mlx_ptr);

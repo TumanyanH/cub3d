@@ -154,4 +154,8 @@ int	mlx_sync(int cmd, void *param);
 
 int	mlx_get_screen_size(void *mlx_ptr, int *sizex, int *sizey);
 
+// 
+// Custom funcs
+// 
+
 #endif /* MLX_H */
