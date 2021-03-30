@@ -55,7 +55,7 @@ int main()
     void *img;
     double posX = 22, posY = 12;
     double dirX = -1, dirY = 0;
-    double planeX = 0, planeY = 0.66;
+    double planeX = 0.66, planeY = 0;
 
     double time = 0;
     double oldTime = 0;
@@ -87,8 +87,8 @@ int main()
         int stepY;
         int hit = 0;
         int side;
-        double deltaDistX = (rayDirY == 0) ? 0 : ((rayDirX == 0) ? 1 : abs(1 / rayDirX));
-        double deltaDistY = (rayDirX == 0) ? 0 : ((rayDirY == 0) ? 1 : abs(1 / rayDirY));
+        double deltaDistX = (rayDirY == 0) ? 0 : ((rayDirX == 0) ? 1 : fabs(1 / rayDirX));
+        double deltaDistY = (rayDirX == 0) ? 0 : ((rayDirY == 0) ? 1 : fabs(1 / rayDirY));
         double perpWallDist;
         
         if (rayDirX < 0)
@@ -144,13 +144,16 @@ int main()
             int color;
             switch(worldMap[mapX][mapY])
             {
-                case 1:  color = 0x00FF0000;  break; //red
-                case 2:  color = 0x0000FF00;  break; //green
-                case 3:  color = 0x000000FF;   break; //blue
-                case 4:  color = 0x00FFFFFF;  break; //white
-                default: color = 0x00FFFF00; break; //yellow
+                case 1:  color = 0x00FF0000; break;
+                case 2:  color = 0x0000FF00; break; 
+                case 3:  color = 0x000000FF; break; 
+                case 4:  color = 0x00FFFFFF; break; 
+                default: color = 0x00000000; break; 
             }
-
+    ()
+    {
+        retrun (r << 16) | (g << 8) | b;
+    }
             //give x and y sides different brightness
             if (side == 1) {color = color / 2;}
 

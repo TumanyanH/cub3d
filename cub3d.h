@@ -13,6 +13,8 @@ struct s_values
     void *mlx_win_ptr;
     int screen_width;
     int screen_height;
+    int texWidth;
+    int texHeight;
 } g_values;
 
 typedef struct s_coords
