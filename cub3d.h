@@ -7,6 +7,16 @@
 # include "libs/minilibx_mms/mlx.h"
 # include "libs/libft/libft.h"
 
+typedef struct s_coords
+{
+    double posX;
+    double posY;
+    double dirX;
+    double dirY;
+    double planeX;
+    double planeY;
+} t_coords;
+
 struct s_values
 {
     void *mlx_ptr;
@@ -15,14 +25,12 @@ struct s_values
     int screen_height;
     int texWidth;
     int texHeight;
+    int topColor;
+    int bottomColor;
+    t_coords currents;
+    int **worldMap;
 } g_values;
 
-typedef struct s_coords
-{
-    int x;
-    int y;
-} t_coords;
-
 void globs_init();
-
+int drawFrame();
 #endif

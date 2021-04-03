@@ -1,30 +1,65 @@
 #include "cub3d.h"
 
+
 int key_hook(int pressed_key, void *params)
 {
+    // printf("%d\n", pressed_key);
     if (pressed_key == 53)
     {
         mlx_destroy_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
         exit(0);
     }
-    
+    else if (pressed_key == 259 || pressed_key == 126) // w
+    {
+        g_values.currents.posX += 0.2;
+        mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
+        drawFrame();
+    }
+    else if (pressed_key == 0 || pressed_key == 123) // a
+    {
+        g_values.currents.posX -= 0.2;
+        mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
+        drawFrame();
+    }
+    else if (pressed_key == 1 || pressed_key == 125) // s
+    {
+        g_values.currents.posX -= 0.2;
+        mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
+        drawFrame();
+    }
+    else if (pressed_key == 2 || pressed_key == 124) // d
+    {
+        g_values.currents.posX += 0.2;
+        mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
+        drawFrame();
+    }
     return 0;
 }
 
 void verLine(int x, int drawStart, int drawEnd, int color)
 {
-    int i = drawStart;
+    int i = 0;
 
+    while (i < drawStart)
+    {
+        mlx_pixel_put(g_values.mlx_ptr, g_values.mlx_win_ptr, x, i, g_values.topColor);
+        i++;
+    }
     while (i < drawEnd)
     {
         mlx_pixel_put(g_values.mlx_ptr, g_values.mlx_win_ptr, x, i, color);
         i++;
     }
+    while (i < g_values.screen_height)
+    {
+        mlx_pixel_put(g_values.mlx_ptr, g_values.mlx_win_ptr, x, i, g_values.bottomColor);
+        i++;
+    }
 }
 
-int main()
+int drawFrame()
 {
-    int worldMap[24][24]=
+    int worldMap[24][24] =
     {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -51,38 +86,25 @@ int main()
         {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
-    t_coords center;
-    void *img;
-    double posX = 22, posY = 12;
-    double dirX = -1, dirY = 0;
-    double planeX = 0.66, planeY = 0;
+    double posX = g_values.currents.posX, posY = g_values.currents.posY;
+    double dirX = g_values.currents.dirX, dirY = g_values.currents.dirY;
+    double planeX = g_values.currents.planeX, planeY = g_values.currents.planeY;
+    int buffer[g_values.screen_height][g_values.screen_width];
 
     double time = 0;
     double oldTime = 0;
 
-    globs_init();
-    center.x = 100;
-    center.y = 100;
-    g_values.mlx_ptr = mlx_init();
-    g_values.mlx_win_ptr = mlx_new_window(g_values.mlx_ptr, g_values.screen_width, g_values.screen_height, "OpenGL Test");
-    mlx_key_hook(g_values.mlx_win_ptr, key_hook, &g_values);
-    // img = mlx_png_file_to_image(g_values.mlx_ptr, path, &img_width, &img_height);
-    // put_circle(center, 50);
     int x = 0;
     while (x < g_values.screen_width)
     {
         double cameraX = 2 * x / (double)g_values.screen_width - 1;
         double rayDirX = dirX + planeX * cameraX;
         double rayDirY = dirY + planeY * cameraX;
-        // double deltaDistX = abs(1 / rayDirX); 
-        // double deltaDistY = abs(1 / rayDirY);
         int mapX = (int)posX;
         int mapY = (int)posY;
         double sideDistX;
         double sideDistY;
-
-        // double deltaDistX = abs(1 / rayDirX);
-        // double deltaDistY = abs(1 / rayDirY);
+        
         int stepX;
         int stepY;
         int hit = 0;
@@ -150,17 +172,23 @@ int main()
                 case 4:  color = 0x00FFFFFF; break; 
                 default: color = 0x00000000; break; 
             }
-    ()
-    {
-        retrun (r << 16) | (g << 8) | b;
-    }
-            //give x and y sides different brightness
+
             if (side == 1) {color = color / 2;}
 
-            //draw the pixels of the stripe as a vertical line
             verLine(x, drawStart, drawEnd, color);
         } 
         x++;
     }
+    return 1;
+}
+
+int main()
+{
+    globs_init();
+    g_values.mlx_ptr = mlx_init();
+    g_values.mlx_win_ptr = mlx_new_window(g_values.mlx_ptr, g_values.screen_width, g_values.screen_height, "OpenGL Test");
+    drawFrame();
+    mlx_key_hook(g_values.mlx_win_ptr, key_hook, &g_values);
     mlx_loop(g_values.mlx_ptr);
+    return 0;
 }
