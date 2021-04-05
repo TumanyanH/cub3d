@@ -40,35 +40,35 @@ void matrix_parser(char *filepath)
             if (line[j] == 'N' || line[j] == 'S' || line[j] == 'E' || line[j] == 'W')
             {
                 worldMatrix[i][j] = 0;
-                g_values.currents.dirX = j;
-                g_values.currents.dirY = i;
+                g_values.currents.posX = j;
+                g_values.currents.posY = i;
                 switch (line[j])
                 {
                 case 'N':
-                    g_values.currents.posX = 0;
-                    g_values.currents.posY = 1;
+                    g_values.currents.dirX = 0;
+                    g_values.currents.dirY = 1;
                     break;
                 case 'S':
-                    g_values.currents.posX = 0;
-                    g_values.currents.posY = -1;
+                    g_values.currents.dirX = 0;
+                    g_values.currents.dirY = -1;
                     break;
                 case 'E':
-                    g_values.currents.posX = 1;
-                    g_values.currents.posY = 0;
+                    g_values.currents.dirX = 1;
+                    g_values.currents.dirY = 0;
                     break;
                 case 'W':
-                    g_values.currents.posX = -1;
-                    g_values.currents.posY = 0;
+                    g_values.currents.dirX = -1;
+                    g_values.currents.dirY = 0;
                     break;
                 default:
-                    g_values.currents.posX = 0;
-                    g_values.currents.posY = 0;
+                    g_values.currents.dirX = 0;
+                    g_values.currents.dirY = 0;
                     break;
                 }
             }
-            else if (line[j] == '0' || line[j] == '1' || line[j] == '2')
+            else if (line[j] == '0' || line[j] == '1' || line[j] == '2' || line[j] == '3' || line[j] == '4')
                 worldMatrix[i][j] = line[j] - '0';
-            else if ((line[j] >= '3' && line[j] <= '9') || line[j] == ' ')
+            else if ((line[j] >= '5' && line[j] <= '9') || line[j] == ' ')
                 worldMatrix[i][j] = 0;
             j++;
         }

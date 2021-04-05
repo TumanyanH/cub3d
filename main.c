@@ -3,33 +3,33 @@
 
 int key_hook(int pressed_key, void *params)
 {
-    // printf("%d\n", pressed_key);
+    printf("%d\n", pressed_key);
     if (pressed_key == 53)
     {
         mlx_destroy_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
         exit(0);
     }
-    else if (pressed_key == 259 || pressed_key == 126) // w
+    else if (pressed_key == 13 || pressed_key == 126) // w
     {
-        g_values.currents.posX += 0.2;
+        g_values.currents.posY -= 0.2;
         mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
         drawFrame();
     }
     else if (pressed_key == 0 || pressed_key == 123) // a
     {
-        g_values.currents.posX -= 0.2;
+        g_values.currents.posX += 0.2;
         mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
         drawFrame();
     }
     else if (pressed_key == 1 || pressed_key == 125) // s
     {
-        g_values.currents.posX -= 0.2;
+        g_values.currents.posY += 0.2;
         mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
         drawFrame();
     }
     else if (pressed_key == 2 || pressed_key == 124) // d
     {
-        g_values.currents.posX += 0.2;
+        g_values.currents.posX -= 0.2;
         mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
         drawFrame();
     }
@@ -129,6 +129,7 @@ int drawFrame()
             else           perpWallDist = (mapY - posY + (1 - stepY) / 2) / rayDirY;
             
             int lineHeight = (int)(g_values.screen_height/ perpWallDist);
+            // printf("%d\n", lineHeight);
 
             //calculate lowest and highest pixel to fill in current stripe
             int drawStart = -lineHeight / 2 + g_values.screen_height/ 2;
@@ -147,7 +148,6 @@ int drawFrame()
             }
 
             if (side == 1) {color = color / 2;}
-
             verLine(x, drawStart, drawEnd, color);
         } 
         x++;
