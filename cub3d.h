@@ -4,8 +4,10 @@
 # include <fcntl.h>
 # include <math.h>
 # include <stdio.h>
+# include <unistd.h>
 # include "libs/minilibx_mms/mlx.h"
 # include "libs/libft/libft.h"
+# include "gnl/get_next_line.h"
 
 typedef struct s_coords
 {
@@ -33,4 +35,7 @@ struct s_values
 
 void globs_init();
 int drawFrame();
+int get_next_line(int fd, char **line);
+void matrix_parser(char *filepath);
+
 #endif
