@@ -19,6 +19,11 @@ typedef struct s_coords
     double planeY;
 } t_coords;
 
+typedef struct s_matrix{
+    char **worldMap;
+    int matrixWidth;
+    int matrixHeight;
+}
 struct s_values
 {
     void *mlx_ptr;
@@ -30,7 +35,7 @@ struct s_values
     int topColor;
     int bottomColor;
     t_coords currents;
-    int **worldMap;
+    t_matrix matrix;
 } g_values;
 
 void globs_init();

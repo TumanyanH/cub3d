@@ -70,10 +70,43 @@ void matrix_parser(char *filepath)
                 worldMatrix[i][j] = line[j] - '0';
             else if ((line[j] >= '5' && line[j] <= '9') || line[j] == ' ')
                 worldMatrix[i][j] = 0;
-            j++;
+            ++j;
         }
         worldMatrix[i][j] = NULL;
-        i++;
+        ++i;
     }
     g_values.worldMap = worldMatrix;
+    for (int k = 0; k <= i; ++k)
+    {
+        for(int l = 0; l <= j; ++l)
+        {
+            printf("%d", g_values.worldMap[k][l]);
+        }
+        printf("\n");
+    }
 }
+
+int is_space(char c)
+{
+    if(c == ' ' || c == '\n' || c == '\t'|| c == '\v'|| c == '\r'|| c == '\f')
+        return (1);
+    return (0);
+}
+
+// int matrix_checker(int **wm)
+// {
+//piti yst maxwidthi matrixy lcvi ete toxi erkarutyuny poqra max widthic mnacacy dni probel
+
+//     for (int i = 0; i < count; ++i)
+//     {
+//         for(int j = 0; j < max_width; ++j)
+//         {
+//             if(matrix[0][j] != 1 || matrix[i][0] != 1 || matrix[count][0] != 1 || matrix[0][max_width] != 1)
+//             {
+//                 printf("Error");
+//                 exit(0);
+//             }
+
+//         }
+//     }
+// }

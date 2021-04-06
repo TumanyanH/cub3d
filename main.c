@@ -11,25 +11,26 @@ int key_hook(int pressed_key, void *params)
     }
     else if (pressed_key == 13 || pressed_key == 126) // w
     {
-        g_values.currents.posY -= 0.2;
+        g_values.currents.posX -= 1;
         mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
         drawFrame();
+        // mlx_destroy_window()
     }
     else if (pressed_key == 0 || pressed_key == 123) // a
     {
-        g_values.currents.posX += 0.2;
+        g_values.currents.posY -= 1;
         mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
         drawFrame();
     }
     else if (pressed_key == 1 || pressed_key == 125) // s
     {
-        g_values.currents.posY += 0.2;
+        g_values.currents.posX += 1;
         mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
         drawFrame();
     }
     else if (pressed_key == 2 || pressed_key == 124) // d
     {
-        g_values.currents.posX -= 0.2;
+        g_values.currents.posY += 1;
         mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
         drawFrame();
     }
@@ -159,7 +160,7 @@ int main()
 {
     globs_init();
     g_values.mlx_ptr = mlx_init();
-    g_values.mlx_win_ptr = mlx_new_window(g_values.mlx_ptr, g_values.screen_width, g_values.screen_height, "OpenGL Test");
+    g_values.mlx_win_ptr = mlx_new_window(g_values.mlx_ptr, g_values.screen_width, g_values.screen_height, "cub3d test");
     drawFrame();
     mlx_key_hook(g_values.mlx_win_ptr, key_hook, &g_values);
     mlx_loop(g_values.mlx_ptr);
