@@ -19,6 +19,8 @@ int **count_height(int fd)
     while (res < count)
         matrix[res++] = (int *)malloc(sizeof(int) * (max_width + 1));
     matrix[res] = NULL;
+    g_values.matrix.matrixWidth = max_width;
+    g_values.matrix.matrixHeight = count;
     return (matrix);
 }
 
@@ -37,53 +39,62 @@ void matrix_parser(char *filepath)
         j = 0;
         while (line[j] != '\0')
         {
-            if (line[j] == 'N' || line[j] == 'S' || line[j] == 'E' || line[j] == 'W')
+            if (line[j] != '\n')
             {
-                worldMatrix[i][j] = 0;
-                g_values.currents.posX = j;
-                g_values.currents.posY = i;
-                switch (line[j])
+                if (line[j] == 'N' || line[j] == 'S' || line[j] == 'E' || line[j] == 'W')
                 {
-                case 'N':
-                    g_values.currents.dirX = 0;
-                    g_values.currents.dirY = 1;
-                    break;
-                case 'S':
-                    g_values.currents.dirX = 0;
-                    g_values.currents.dirY = -1;
-                    break;
-                case 'E':
-                    g_values.currents.dirX = 1;
-                    g_values.currents.dirY = 0;
-                    break;
-                case 'W':
-                    g_values.currents.dirX = -1;
-                    g_values.currents.dirY = 0;
-                    break;
-                default:
-                    g_values.currents.dirX = 0;
-                    g_values.currents.dirY = 0;
-                    break;
+                    worldMatrix[i][j] = 0;
+                    g_values.currents.posX = j;
+                    g_values.currents.posY = i;
+                    switch (line[j])
+                    {
+                    case 'N':
+                        g_values.currents.dirX = 0;
+                        g_values.currents.dirY = 1;
+                        break;
+                    case 'S':
+                        g_values.currents.dirX = 0;
+                        g_values.currents.dirY = -1;
+                        break;
+                    case 'E':
+                        g_values.currents.dirX = 1;
+                        g_values.currents.dirY = 0;
+                        break;
+                    case 'W':
+                        g_values.currents.dirX = -1;
+                        g_values.currents.dirY = 0;
+                        break;
+                    default:
+                        g_values.currents.dirX = 0;
+                        g_values.currents.dirY = 0;
+                        break;
+                    }
                 }
+                else if (line[j] == '0' || line[j] == '1' || line[j] == '2' || line[j] == '3' || line[j] == '4')
+                    worldMatrix[i][j] = line[j] - '0';
+                else if ((line[j] >= '5' && line[j] <= '9') || line[j] == ' ')
+                    worldMatrix[i][j] = 0;
             }
-            else if (line[j] == '0' || line[j] == '1' || line[j] == '2' || line[j] == '3' || line[j] == '4')
-                worldMatrix[i][j] = line[j] - '0';
-            else if ((line[j] >= '5' && line[j] <= '9') || line[j] == ' ')
-                worldMatrix[i][j] = 0;
+            ++j;
+        }
+        while (j < g_values.matrix.matrixWidth)
+        {
+            worldMatrix[i][j] = 0;
             ++j;
         }
         worldMatrix[i][j] = NULL;
         ++i;
     }
-    g_values.worldMap = worldMatrix;
-    for (int k = 0; k <= i; ++k)
+    g_values.matrix.worldMap = worldMatrix;
+    for (int k = 0; k < i; ++k)
     {
-        for(int l = 0; l <= j; ++l)
+        for(int l = 0; l < j; ++l)
         {
-            printf("%d", g_values.worldMap[k][l]);
+            printf("%d", g_values.matrix.worldMap[k][l]);
         }
         printf("\n");
     }
+    matrix_checker();
 }
 
 int is_space(char c)
@@ -93,20 +104,20 @@ int is_space(char c)
     return (0);
 }
 
-// int matrix_checker(int **wm)
-// {
-//piti yst maxwidthi matrixy lcvi ete toxi erkarutyuny poqra max widthic mnacacy dni probel
-
-//     for (int i = 0; i < count; ++i)
-//     {
-//         for(int j = 0; j < max_width; ++j)
-//         {
-//             if(matrix[0][j] != 1 || matrix[i][0] != 1 || matrix[count][0] != 1 || matrix[0][max_width] != 1)
-//             {
-//                 printf("Error");
-//                 exit(0);
-//             }
-
-//         }
-//     }
-// }
+int matrix_checker()
+{
+    //piti yst maxwidthi matrixy lcvi ete toxi erkarutyuny poqra max widthic mnacacy dni probel
+    // printf("%d\n", g_values.matrix.matrixWidth);
+    for (int i = 0; i < g_values.matrix.matrixHeight; i++)
+    {
+        for(int j = 0; j < g_values.matrix.matrixWidth; j++)
+        {
+            if(g_values.matrix.worldMap[0][j] != 1 || g_values.matrix.worldMap[i][0] != 1/* || g_values.matrix.worldMap[g_values.matrix.matrixHeight][0] != 1 || g_values.matrix.worldMap[0][g_values.matrix.matrixWidth] != 1*/)
+            {
+                printf("Error");
+                exit(0);
+            }
+        }
+    }
+    return 0;
+}

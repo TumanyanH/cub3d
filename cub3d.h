@@ -20,10 +20,11 @@ typedef struct s_coords
 } t_coords;
 
 typedef struct s_matrix{
-    char **worldMap;
+    int **worldMap;
     int matrixWidth;
     int matrixHeight;
-}
+} t_matrix;
+
 struct s_values
 {
     void *mlx_ptr;
@@ -42,5 +43,6 @@ void globs_init();
 int drawFrame();
 int get_next_line(int fd, char **line);
 void matrix_parser(char *filepath);
+int matrix_checker();
 
 #endif

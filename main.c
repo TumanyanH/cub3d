@@ -3,7 +3,7 @@
 
 int key_hook(int pressed_key, void *params)
 {
-    printf("%d\n", pressed_key);
+    // printf("%d\n", pressed_key);
     if (pressed_key == 53)
     {
         mlx_destroy_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
@@ -123,7 +123,7 @@ int drawFrame()
                 side = 1;
             }
             //Check if ray has hit a wall
-            if (g_values.worldMap[mapX][mapY] > 0) 
+            if (g_values.matrix.worldMap[mapX][mapY] > 0) 
                 hit = 1;
 
             if (side == 0) perpWallDist = (mapX - posX + (1 - stepX) / 2) / rayDirX;
@@ -139,7 +139,7 @@ int drawFrame()
             if(drawEnd >= g_values.screen_height)drawEnd = g_values.screen_height- 1;
 
             int color;
-            switch(g_values.worldMap[mapX][mapY])
+            switch(g_values.matrix.worldMap[mapX][mapY])
             {
                 case 1:  color = 0x00FF0000; break;
                 case 2:  color = 0x0000FF00; break; 
