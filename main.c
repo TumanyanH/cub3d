@@ -11,26 +11,26 @@ int key_hook(int pressed_key, void *params)
     }
     else if (pressed_key == 13 || pressed_key == 126) // w
     {
-        g_values.currents.posX -= 1;
+        g_values.currents.posX -= 0.15;
         mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
         drawFrame();
         // mlx_destroy_window()
     }
     else if (pressed_key == 0 || pressed_key == 123) // a
     {
-        g_values.currents.posY -= 1;
+        g_values.currents.posY -= 0.15;
         mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
         drawFrame();
     }
     else if (pressed_key == 1 || pressed_key == 125) // s
     {
-        g_values.currents.posX += 1;
+        g_values.currents.posX += 0.15;
         mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
         drawFrame();
     }
     else if (pressed_key == 2 || pressed_key == 124) // d
     {
-        g_values.currents.posY += 1;
+        g_values.currents.posY += 0.15;
         mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
         drawFrame();
     }
@@ -123,7 +123,7 @@ int drawFrame()
                 side = 1;
             }
             //Check if ray has hit a wall
-            if (g_values.matrix.worldMap[mapX][mapY] > 0) 
+            if (g_values.matrix.worldMap[mapX][mapY] > '0') 
                 hit = 1;
 
             if (side == 0) perpWallDist = (mapX - posX + (1 - stepX) / 2) / rayDirX;
@@ -141,11 +141,21 @@ int drawFrame()
             int color;
             switch(g_values.matrix.worldMap[mapX][mapY])
             {
-                case 1:  color = 0x00FF0000; break;
-                case 2:  color = 0x0000FF00; break; 
-                case 3:  color = 0x000000FF; break; 
-                case 4:  color = 0x00FFFFFF; break; 
-                default: color = 0x00000000; break; 
+                case '1':
+                    color = 0x00FF0000;
+                    break;
+                case '2':
+                    color = 0x0000FF00;
+                    break;
+                case '3':
+                    color = 0x000000FF;
+                    break;
+                case '4':
+                    color = 0x00FFFFFF;
+                    break;
+                default: 
+                    color = 0x00000000;
+                    break; 
             }
 
             if (side == 1) {color = color / 2;}

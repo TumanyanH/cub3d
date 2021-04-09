@@ -1,12 +1,12 @@
 # include "cub3d.h"
 
-int **count_height(int fd)
+char **count_height(int fd)
 {
     int res = 0;
     char *line;
     int count = 0;
     int max_width = 0;
-    int **matrix;
+    char **matrix;
 
     while ((res = get_next_line(fd, &line)) > 0)
     {
@@ -14,10 +14,10 @@ int **count_height(int fd)
             max_width = ft_strlen(line);
         count++;
     }
-    matrix = (int **)malloc(sizeof(int *) * (count + 1));
+    matrix = (char **)malloc(sizeof(char *) * (count + 1));
     res = 0;
     while (res < count)
-        matrix[res++] = (int *)malloc(sizeof(int) * (max_width + 1));
+        matrix[res++] = (char *)malloc(sizeof(char) * (max_width + 1));
     matrix[res] = NULL;
     g_values.matrix.matrixWidth = max_width;
     g_values.matrix.matrixHeight = count;
@@ -29,7 +29,7 @@ void matrix_parser(char *filepath)
     char *line = NULL;
     int res = 0;
     int fd = open(filepath, O_RDWR|O_CREAT, 0666);
-    int **worldMatrix;
+    char **worldMatrix;
     int i = 0, j = 0;
     worldMatrix = count_height(fd);
     close(fd);
@@ -43,7 +43,7 @@ void matrix_parser(char *filepath)
             {
                 if (line[j] == 'N' || line[j] == 'S' || line[j] == 'E' || line[j] == 'W')
                 {
-                    worldMatrix[i][j] = 0;
+                    worldMatrix[i][j] = '0';
                     g_values.currents.posX = j;
                     g_values.currents.posY = i;
                     switch (line[j])
@@ -70,19 +70,19 @@ void matrix_parser(char *filepath)
                         break;
                     }
                 }
-                else if (line[j] == '0' || line[j] == '1' || line[j] == '2' || line[j] == '3' || line[j] == '4')
-                    worldMatrix[i][j] = line[j] - '0';
-                else if ((line[j] >= '5' && line[j] <= '9') || line[j] == ' ')
-                    worldMatrix[i][j] = 0;
+                else /*if (line[j] == '0' || line[j] == '1' || line[j] == '2' || line[j] == '3' || line[j] == '4')*/
+                    worldMatrix[i][j] = line[j];
+                // else if ((line[j] > '5' && line[j] <= '9') || line[j] == ' ')
+                //     worldMatrix[i][j] = ' ';
             }
             ++j;
         }
         while (j < g_values.matrix.matrixWidth)
         {
-            worldMatrix[i][j] = 0;
+            worldMatrix[i][j] = ' ';
             ++j;
         }
-        worldMatrix[i][j] = NULL;
+        worldMatrix[i][j] = '\0';
         ++i;
     }
     g_values.matrix.worldMap = worldMatrix;
@@ -90,7 +90,7 @@ void matrix_parser(char *filepath)
     {
         for(int l = 0; l < j; ++l)
         {
-            printf("%d", g_values.matrix.worldMap[k][l]);
+            printf("%c", g_values.matrix.worldMap[k][l]);
         }
         printf("\n");
     }
@@ -106,18 +106,23 @@ int is_space(char c)
 
 int matrix_checker()
 {
+    char **vm = g_values.matrix.worldMap;
+    int k = 0;
     //piti yst maxwidthi matrixy lcvi ete toxi erkarutyuny poqra max widthic mnacacy dni probel
-    // printf("%d\n", g_values.matrix.matrixWidth);
+    printf("%d\n\n", g_values.matrix.matrixWidth);
     for (int i = 0; i < g_values.matrix.matrixHeight; i++)
     {
         for(int j = 0; j < g_values.matrix.matrixWidth; j++)
         {
-            if(g_values.matrix.worldMap[0][j] != 1 || g_values.matrix.worldMap[i][0] != 1/* || g_values.matrix.worldMap[g_values.matrix.matrixHeight][0] != 1 || g_values.matrix.worldMap[0][g_values.matrix.matrixWidth] != 1*/)
+            if(vm[0][j] != '1' || vm[i][0] != '1' || vm[g_values.matrix.matrixHeight - 1][0] != '1' || vm[0][g_values.matrix.matrixWidth - 1] != '1' || vm[0][j] != ' ' || vm[i][0] != ' ' || vm[g_values.matrix.matrixHeight - 1][0] != ' ' || vm[0][g_values.matrix.matrixWidth - 1] != ' ')
             {
-                printf("Error");
+                ++k;
+                printf("Error number %d\n", k);
                 exit(0);
             }
         }
     }
+
+
     return 0;
 }

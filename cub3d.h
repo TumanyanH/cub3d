@@ -20,7 +20,7 @@ typedef struct s_coords
 } t_coords;
 
 typedef struct s_matrix{
-    int **worldMap;
+    char **worldMap;
     int matrixWidth;
     int matrixHeight;
 } t_matrix;
