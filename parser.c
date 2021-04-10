@@ -94,7 +94,7 @@ void matrix_parser(char *filepath)
         }
         printf("\n");
     }
-    matrix_checker();
+    // matrix_checker();
 }
 
 int is_space(char c)

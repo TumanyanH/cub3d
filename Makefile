@@ -16,6 +16,7 @@ LIBFT_FLAGS = -Llibs/libft -lft
 $(NAME) : 	${OBJS}
 			# @mv libs/minilibx_mms/libmlx.dylib .
 			${CC} ${SRCS} ${MLX_FALGS} ${LIBFT_FLAGS} -o ${NAME}
+			./cub3d
 
 all : ${NAME}
 

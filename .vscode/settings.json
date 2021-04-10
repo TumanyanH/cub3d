@@ -8,6 +8,8 @@
         "stdio.h": "c",
         "chrono": "c",
         "complex": "c",
-        "get_next_line.h": "c"
+        "get_next_line.h": "c",
+        "time.h": "c",
+        "ctime": "cpp"
     }
 }

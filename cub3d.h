@@ -5,6 +5,7 @@
 # include <math.h>
 # include <stdio.h>
 # include <unistd.h>
+# include <time.h>
 # include "libs/minilibx_mms/mlx.h"
 # include "libs/libft/libft.h"
 # include "gnl/get_next_line.h"
@@ -25,6 +26,16 @@ typedef struct s_matrix{
     int matrixHeight;
 } t_matrix;
 
+
+typedef struct  s_data {
+    void        *ptr;
+    char        *addr;
+    int         bits_per_pixel;
+    int         line_length;
+    int         endian;
+}               t_image;
+
+
 struct s_values
 {
     void *mlx_ptr;
@@ -35,8 +46,12 @@ struct s_values
     int texHeight;
     int topColor;
     int bottomColor;
+    double moveSpeed;
+    double rotSpeed;
     t_coords currents;
     t_matrix matrix;
+    void *currentImage;
+    t_image image;
 } g_values;
 
 void globs_init();
@@ -44,5 +59,7 @@ int drawFrame();
 int get_next_line(int fd, char **line);
 void matrix_parser(char *filepath);
 int matrix_checker();
+
+void            my_mlx_pixel_put(t_image *data, int x, int y, int color);
 
 #endif
