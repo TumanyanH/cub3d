@@ -9,7 +9,10 @@ int key_hook(int pressed_key, void *params)
     double dirX = g_values.currents.dirX;
     double dirY = g_values.currents.dirY;
     double moveSpeed = g_values.moveSpeed;
+    double rotSpeed = g_values.rotSpeed;
     
+    printf("%f\n", (dirX * moveSpeed));
+
     if (pressed_key == 53)
     {
         mlx_destroy_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
@@ -17,33 +20,50 @@ int key_hook(int pressed_key, void *params)
     }
     else if (pressed_key == 13 || pressed_key == 126) // w
     {
-        // printf("%f\n", (dirX * moveSpeed));
-        if(worldMap[(int)(posX + dirX * moveSpeed)][(int)(posY)] == 0) posX += dirX * moveSpeed;
-        if(worldMap[(int)(posX)][(int)(posY + dirY * moveSpeed)] == 0) posY += dirY * moveSpeed;
-        mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
+        printf("%f\n", (dirX * moveSpeed));
+        // mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
+        printf("%c --- \n", (worldMap[(int)(posX + dirX * moveSpeed)][(int)(posY)]));
+        if(worldMap[(int)(posX + dirX * moveSpeed)][(int)(posY)] == '0') g_values.currents.posX += dirX * moveSpeed;
+        if(worldMap[(int)(posX)][(int)(posY + dirY * moveSpeed)] == '0') g_values.currents.posY += dirY * moveSpeed;
         // printf("%f\n", posX);
-        // g_values.currents.posX -= 0.15;
+        // g_values.currents.posX += dirX * moveSpeed;
         drawFrame();
         // mlx_destroy_window()
     }
     else if (pressed_key == 0 || pressed_key == 123) // a
     {
-        g_values.currents.posY -= 0.15;
-        mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
+        // g_values.currents.posY += dirY * moveSpeed;
+        // mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
+        double oldDirX = g_values.currents.dirX;
+        g_values.currents.dirX = g_values.currents.dirX * cos(g_values.rotSpeed) - dirY * sin(g_values.rotSpeed);
+        g_values.currents.dirY = oldDirX * sin(g_values.rotSpeed) + dirY * cos(g_values.rotSpeed);
+        double oldPlaneX = g_values.currents.planeX;
+        g_values.currents.planeX = g_values.currents.planeX * cos(g_values.rotSpeed) - g_values.currents.planeY * sin(g_values.rotSpeed);
+        g_values.currents.planeY = oldPlaneX * sin(g_values.rotSpeed) + g_values.currents.planeY * cos(g_values.rotSpeed);
         drawFrame();
     }
     else if (pressed_key == 1 || pressed_key == 125) // s
     {
-        g_values.currents.posX += 0.15;
-        mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
+        // g_values.currents.posX += dirX * moveSpeed;
+        // mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
+        printf("%d\n", 5);
+        if(worldMap[(int)(posX - dirX * moveSpeed)][(int)(posY)] == '0') g_values.currents.posX -= dirX * moveSpeed;
+        if(worldMap[(int)(posX)][(int)(posY - dirY * moveSpeed)] == '0') g_values.currents.posY -= dirY * moveSpeed;
         drawFrame();
     }
     else if (pressed_key == 2 || pressed_key == 124) // d
     {
-        g_values.currents.posY += 0.15;
-        mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
+        g_values.currents.posY += dirY * moveSpeed;
+        // mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
+        double oldDirX = g_values.currents.dirX;
+        g_values.currents.dirX = g_values.currents.dirX * cos(-g_values.rotSpeed) - dirY * sin(-g_values.rotSpeed);
+        g_values.currents.dirY = oldDirX * sin(-g_values.rotSpeed) + dirY * cos(-g_values.rotSpeed);
+        double oldPlaneX = g_values.currents.planeX;
+        g_values.currents.planeX = g_values.currents.planeX * cos(-g_values.rotSpeed) - g_values.currents.planeY * sin(-g_values.rotSpeed);
+        g_values.currents.planeY = oldPlaneX * sin(-g_values.rotSpeed) + g_values.currents.planeY * cos(-g_values.rotSpeed);
         drawFrame();
     }
+    // mlx_do_sync(g_values.mlx_ptr);
     return 0;
 }
 
@@ -163,6 +183,9 @@ int drawFrame()
                 case '4':
                     color = 0x00FFFFFF;
                     break;
+                case '5':
+                    color = 0x00AAAAAA;
+                    break;
                 default: 
                     color = 0x00000000;
                     break; 
@@ -174,20 +197,26 @@ int drawFrame()
         }
         x++;
     }
-    mlx_put_image_to_window(g_values.mlx_ptr, g_values.mlx_win_ptr, g_values.image.ptr, 0, 0);
+    
     oldTime = time;
     time = clock();
     clock_t frameTime = (time - oldTime) / 1000.0; //frameTime is the time this frame has taken, in seconds
     // printf("%d\n", (1.0 / frameTime)); //FPS counter
     // redraw();
     // cls();
-
+    double frameTimeI = 1.0 / (double)frameTime;
     //speed modifiers
-    g_values.moveSpeed = frameTime * 5.0; //the constant value is in squares/second
-    g_values.rotSpeed = frameTime * 3.0;
+    g_values.moveSpeed = frameTimeI * 5.0; //the constant value is in squares/second
+    g_values.rotSpeed = frameTimeI * 3.0;
+    // printf("%f -\n", g_values.moveSpeed);
     return 1;
 }
 
+int func(struct s_values *s)
+{
+    mlx_put_image_to_window(s->mlx_ptr, s->mlx_win_ptr, s->image.ptr, 0, 0);
+    mlx_do_sync(s->mlx_ptr);
+}
 int main()
 {
     globs_init();
@@ -198,9 +227,11 @@ int main()
 
     g_values.image.ptr = mlx_new_image(g_values.mlx_ptr, g_values.screen_width, g_values.screen_height);
     g_values.image.addr = mlx_get_data_addr(g_values.image.ptr, &g_values.image.bits_per_pixel, &g_values.image.line_length, &g_values.image.endian);
-    g_values.currentImage = mlx_new_image(g_values.mlx_ptr, g_values.screen_width, g_values.screen_height);
+    // g_values.currentImage = mlx_new_image(g_values.mlx_ptr, g_values.screen_width, g_values.screen_height);
     drawFrame();
-    mlx_key_hook(g_values.mlx_win_ptr, key_hook, &g_values);
+    // mlx_hook(g_values.mlx_win_ptr,2,0, key_hook, &g_values);
+    mlx_hook(g_values.mlx_win_ptr, 2, 1L << 0, key_hook, &g_values);
+    mlx_loop_hook(g_values.mlx_ptr, func, &g_values);
     mlx_loop(g_values.mlx_ptr);
     return 0;
 }
