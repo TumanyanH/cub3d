@@ -70,16 +70,16 @@ void matrix_parser(char *filepath)
                         break;
                     }
                 }
-                else /*if (line[j] == '0' || line[j] == '1' || line[j] == '2' || line[j] == '3' || line[j] == '4')*/
+                else if (line[j] == '0' || line[j] == '1' || line[j] == '2' || line[j] == '3' || line[j] == '4' || line[j] == '5')
                     worldMatrix[i][j] = line[j];
-                // else if ((line[j] > '5' && line[j] <= '9') || line[j] == ' ')
-                //     worldMatrix[i][j] = ' ';
+                else if (line[j] == ' ')
+                    worldMatrix[i][j] = '*';
             }
             ++j;
         }
         while (j < g_values.matrix.matrixWidth)
         {
-            worldMatrix[i][j] = ' ';
+            worldMatrix[i][j] = '*';
             ++j;
         }
         worldMatrix[i][j] = '\0';
@@ -94,7 +94,7 @@ void matrix_parser(char *filepath)
         }
         printf("\n");
     }
-    // matrix_checker();
+    matrix_checker();
 }
 
 int is_space(char c)
@@ -107,22 +107,49 @@ int is_space(char c)
 int matrix_checker()
 {
     char **vm = g_values.matrix.worldMap;
-    int k = 0;
     //piti yst maxwidthi matrixy lcvi ete toxi erkarutyuny poqra max widthic mnacacy dni probel
-    printf("%d\n\n", g_values.matrix.matrixWidth);
-    for (int i = 0; i < g_values.matrix.matrixHeight; i++)
+    //printf("%d\n\n", g_values.matrix.matrixWidth);
+    for (int i = 0; i < g_values.matrix.matrixHeight; ++i)
     {
-        for(int j = 0; j < g_values.matrix.matrixWidth; j++)
+        for(int j = 0; j < g_values.matrix.matrixWidth; ++j)
         {
-            if(vm[0][j] != '1' || vm[i][0] != '1' || vm[g_values.matrix.matrixHeight - 1][0] != '1' || vm[0][g_values.matrix.matrixWidth - 1] != '1' || vm[0][j] != ' ' || vm[i][0] != ' ' || vm[g_values.matrix.matrixHeight - 1][0] != ' ' || vm[0][g_values.matrix.matrixWidth - 1] != ' ')
-            {
-                ++k;
-                printf("Error number %d\n", k);
+            if (vm[0][j] != '1' && vm[0][j] != '*' && vm[g_values.matrix.matrixHeight - 1][j] != '1' && vm[g_values.matrix.matrixHeight - 1][j] != '*' && 
+             vm[i][0] != '1' && vm[i][0] != '*' && vm[i][g_values.matrix.matrixWidth - 1] != '1' && vm[i][g_values.matrix.matrixWidth - 1] != '*')
+             {
+                printf("Error\n");
+               // printf("vm[0][0] : %d\n", vm[0][0]);
+               // printf("i : %d, j : %d\n", i, j);
                 exit(0);
             }
         }
     }
+    //int i = 1 ,j = 1;
 
+    for (int i = 1; i < g_values.matrix.matrixHeight - 1; ++i)
+    {
+        for (int j = 1; j < g_values.matrix.matrixWidth - 1; ++j)
+        {
+            if (vm[i][j] == '*')
+            {
+                if ((vm[i][j + 1] != '1' && vm[i][j + 1] != '*') || (vm[i + 1][j] != '1' && vm[i + 1][j] != '*'))              
+                {
+                    printf("Error mapy patov chi shrjapakvac\n");
+                    exit(0);
+                }
 
+            }
+            else if (vm[i][j] > '9' || vm[i][j] < '0' || vm [i][j] == '*')
+            {
+
+                printf("Error urish simvol\n");
+                exit(0);
+            }
+            else
+            {
+                printf("The element of matrix [%d][%d]: %c\n",i, j, vm[i][j]);
+            }
+        }
+    }
+    printf("Chisht matrix\n");
     return 0;
 }
