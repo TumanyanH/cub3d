@@ -8,7 +8,8 @@ int key_hook(int pressed_key, void *params)
     double posY = g_values.currents.posY;
     double dirX = g_values.currents.dirX;
     double dirY = g_values.currents.dirY;
-    double moveSpeed = g_values.moveSpeed;
+    double moveSpeed = 0.15;
+    g_values.rotSpeed = 0.05;
     double rotSpeed = g_values.rotSpeed;
     
     printf("%f\n", (dirX * moveSpeed));
@@ -18,7 +19,7 @@ int key_hook(int pressed_key, void *params)
         mlx_destroy_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
         exit(0);
     }
-    else if (pressed_key == 13 || pressed_key == 126) // w
+    if (pressed_key == 13 || pressed_key == 126) // w
     {
         printf("%f\n", (dirX * moveSpeed));
         // mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
@@ -30,7 +31,7 @@ int key_hook(int pressed_key, void *params)
         drawFrame();
         // mlx_destroy_window()
     }
-    else if (pressed_key == 0 || pressed_key == 123) // a
+    if (pressed_key == 0 || pressed_key == 123) // a
     {
         // g_values.currents.posY += dirY * moveSpeed;
         // mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
@@ -42,7 +43,7 @@ int key_hook(int pressed_key, void *params)
         g_values.currents.planeY = oldPlaneX * sin(g_values.rotSpeed) + g_values.currents.planeY * cos(g_values.rotSpeed);
         drawFrame();
     }
-    else if (pressed_key == 1 || pressed_key == 125) // s
+    if (pressed_key == 1 || pressed_key == 125) // s
     {
         // g_values.currents.posX += dirX * moveSpeed;
         // mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
@@ -51,9 +52,9 @@ int key_hook(int pressed_key, void *params)
         if(worldMap[(int)(posX)][(int)(posY - dirY * moveSpeed)] == '0') g_values.currents.posY -= dirY * moveSpeed;
         drawFrame();
     }
-    else if (pressed_key == 2 || pressed_key == 124) // d
+    if (pressed_key == 2 || pressed_key == 124) // d
     {
-        g_values.currents.posY += dirY * moveSpeed;
+        // g_values.currents.posY += dirY * moveSpeed;
         // mlx_clear_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
         double oldDirX = g_values.currents.dirX;
         g_values.currents.dirX = g_values.currents.dirX * cos(-g_values.rotSpeed) - dirY * sin(-g_values.rotSpeed);
@@ -95,8 +96,8 @@ int drawFrame()
     double planeX = g_values.currents.planeX, planeY = g_values.currents.planeY;
     int buffer[g_values.screen_height][g_values.screen_width];
 
-    clock_t time = clock();
-    clock_t oldTime = 0;
+    // clock_t time = clock();
+    // clock_t oldTime = 0;
 
     int x = 0;
     while (x < g_values.screen_width)
@@ -197,25 +198,26 @@ int drawFrame()
         }
         x++;
     }
+    // mlx_put_image_to_window(g_values.mlx_ptr, g_values.mlx_win_ptr, g_values.image.ptr, 0, 0);
     
-    oldTime = time;
-    time = clock();
-    clock_t frameTime = (time - oldTime) / 1000.0; //frameTime is the time this frame has taken, in seconds
+    // oldTime = time;
+    // time = clock();
+    // clock_t frameTime = (time - oldTime) / 1000.0; //frameTime is the time this frame has taken, in seconds
     // printf("%d\n", (1.0 / frameTime)); //FPS counter
     // redraw();
     // cls();
-    double frameTimeI = 1.0 / (double)frameTime;
+    // double frameTimeI = 1.0 / (double)frameTime;
     //speed modifiers
-    g_values.moveSpeed = frameTimeI * 5.0; //the constant value is in squares/second
-    g_values.rotSpeed = frameTimeI * 3.0;
+    g_values.moveSpeed = 0.15; //the constant value is in squares/second
+    g_values.rotSpeed = 0.05; //frameTimeI * 3.0;
     // printf("%f -\n", g_values.moveSpeed);
     return 1;
 }
 
 int func(struct s_values *s)
 {
-    mlx_put_image_to_window(s->mlx_ptr, s->mlx_win_ptr, s->image.ptr, 0, 0);
     mlx_do_sync(s->mlx_ptr);
+    mlx_put_image_to_window(s->mlx_ptr, s->mlx_win_ptr, s->image.ptr, 0, 0);
     return (0);
 }
 int main()
@@ -224,7 +226,7 @@ int main()
     g_values.mlx_ptr = mlx_init();
     g_values.mlx_win_ptr = mlx_new_window(g_values.mlx_ptr, g_values.screen_width, g_values.screen_height, "cub3d test");
 
-    matrix_parser("maps/hard.cub");
+    matrix_parser("maps/map.cub");
 
     g_values.image.ptr = mlx_new_image(g_values.mlx_ptr, g_values.screen_width, g_values.screen_height);
     g_values.image.addr = mlx_get_data_addr(g_values.image.ptr, &g_values.image.bits_per_pixel, &g_values.image.line_length, &g_values.image.endian);
