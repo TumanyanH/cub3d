@@ -146,7 +146,7 @@ int matrix_checker()
             }
             else
             {
-                printf("The element of matrix [%d][%d]: %c\n",i, j, vm[i][j]);
+                // printf("The element of matrix [%d][%d]: %c\n",i, j, vm[i][j]);
             }
         }
     }

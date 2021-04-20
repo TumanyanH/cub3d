@@ -35,6 +35,12 @@ typedef struct  s_data {
     int         endian;
 }               t_image;
 
+typedef struct s_keys {
+    int up;
+    int down;
+    int left;
+    int right;
+} t_keys;
 
 struct s_values
 {
@@ -52,6 +58,8 @@ struct s_values
     t_matrix matrix;
     void *currentImage;
     t_image image;
+    t_keys keys;
+    // int *texture[8];
 } g_values;
 
 void globs_init();
