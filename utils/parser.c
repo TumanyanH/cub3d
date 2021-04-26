@@ -1,4 +1,4 @@
-# include "cub3d.h"
+# include "../cub3d.h"
 
 char **count_height(int fd)
 {

@@ -2,7 +2,7 @@ NAME = cub3d
 CC = gcc
 AR = ar csr
 CP = cp
-SRCS = main.c cub3d_utils.c parser.c gnl/get_next_line.c
+SRCS = main.c utils/cub3d_utils.c utils/parser.c gnl/get_next_line.c utils/get_sprite.c utils/get_pixel.c utils/error.c
 OBJS = ${SRCS:.c=.o}
 COMPILE_FLAGS = -Wall -Wextra -Werror
 MLX_FALGS = -Llibs/minilibx_mms -lmlx -framework OpenGL -framework AppKit
