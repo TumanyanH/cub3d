@@ -10,6 +10,7 @@
         "complex": "c",
         "get_next_line.h": "c",
         "time.h": "c",
-        "ctime": "cpp"
+        "ctime": "cpp",
+        "type_traits": "c"
     }
 }

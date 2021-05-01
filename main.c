@@ -74,11 +74,14 @@ int key_press_hook (int pressed_key)
         g_values.keys.down = 1;
     if (pressed_key == 2 || pressed_key == 124) // d
         g_values.keys.right = 1;
+    if (pressed_key == 257)
+        g_values.moveSpeed = 0.15;
     return 0;
 }
 
 int key_release_hook (int pressed_key)
 {
+    printf("%d\n", pressed_key);
     if (pressed_key == 53)
     {
         mlx_destroy_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
@@ -92,6 +95,8 @@ int key_release_hook (int pressed_key)
         g_values.keys.down = 0;
     if (pressed_key == 2 || pressed_key == 124) // d
         g_values.keys.right = 0;
+    if (pressed_key == 257)
+        g_values.moveSpeed = 0.1;
     return 0;
 }
 
@@ -120,51 +125,62 @@ void verLine(int x, int drawStart, int drawEnd, int color)
 
 void drawBuffer(int x, int drawStart, int drawEnd, int** buffer)
 {
-    int i = 0;
+    // int i = 0;
 
-    while (i < g_values.screen_height)
+    // while (i < g_values.screen_height)
+    // {
+    //     if (i < drawStart)
+    //         my_mlx_pixel_put(x, i, g_values.p.ceilling_color);
+    //     else if (i >= drawStart && i <= drawEnd)
+    //         my_mlx_pixel_put(x, i, buffer[i][x]);
+    //     else 
+    //         my_mlx_pixel_put(x, i, g_values.p.floore_color);
+    //     i++;
+    // }
+}
+
+void	side_world(int x, int y)
+{
+	if (y < g_values.norm_printf_map.drawStart)
+		my_mlx_pixel_put(&g_values.image, x, y, g_values.p.ceilling_color);
+	if (y >= g_values.norm_printf_map.drawStart && y <= g_values.norm_printf_map.drawEnd)
+	{
+        g_values.norm_printf_map.texY = (int)g_values.norm_printf_map.texPos & (g_values.texHeight - 1);
+        g_values.norm_printf_map.texPos += g_values.norm_printf_map.step;
+        if (g_values.norm_printf_map.side == 1)
+        {
+            if (g_values.norm_printf_map.stepY > 0)
+                my_mlx_pixel_put(&g_values.image, x, y,
+                get_pixel(&g_values.t_n, g_values.norm_printf_map.texX, g_values.norm_printf_map.texY));
+            else
+                my_mlx_pixel_put(&g_values.image, x, y,
+                get_pixel(&g_values.t_n, g_values.norm_printf_map.texX, g_values.norm_printf_map.texY));
+        }
+        else
+        {
+            if (g_values.norm_printf_map.stepY > 0)
+                my_mlx_pixel_put(&g_values.image, x, y,
+                get_pixel(&g_values.t_e, g_values.norm_printf_map.texX, g_values.norm_printf_map.texY));
+            else
+                my_mlx_pixel_put(&g_values.image, x, y,
+                get_pixel(&g_values.t_w, g_values.norm_printf_map.texX, g_values.norm_printf_map.texY));
+        }
+    }
+	if (y > g_values.norm_printf_map.drawEnd && y < g_values.p.res_l)
+		my_mlx_pixel_put(&g_values.image, x, y, g_values.p.floore_color);
+    // printf("x - %d, y - %d\n", x, *y);
+}
+
+void clear_screen()
+{
+    for (int y = 0; y < g_values.screen_height; y++)
     {
-        if (i < drawStart)
-            my_mlx_pixel_put(x, i, g_values.p.ceilling_color);
-        else if (i >= drawStart && i <= drawEnd)
-            my_mlx_pixel_put(x, i, buffer[i][x]);
-        else 
-            my_mlx_pixel_put(x, i, g_values.p.floore_color);
-        i++;
+        for (int x = 0; x < g_values.screen_width; x++)
+        {
+		    my_mlx_pixel_put(&g_values.image, x, y, 0x00000000);
+        }
     }
 }
-
-void	side_world(int *x, int *y)
-{
-	if (*y < g_values.norm_printf_map.drawStart)
-		my_mlx_pixel_put(*x, *y, g_values.p.ceilling_color);
-	// if (*y >= g_values.norm_printf_map.drawStart && *y <= g_values.norm_printf_map.drawEnd)
-	// 	g_values.norm_printf_map.texY = (int)g_values.norm_printf_map.texPos & (g_values.texHeight - 1);
-    //     g_values.norm_printf_map.texPos += g_values.norm_printf_map.step;
-    //     if (g_values.norm_printf_map.side == 1)
-    //     {
-    //         if (g_values.norm_printf_map.stepY > 0)
-    //             my_mlx_pixel_put(*x, *y,
-    //             get_pixel(&g_values.t_n, g_values.norm_printf_map.texX, g_values.norm_printf_map.texY));
-    //         else
-    //             my_mlx_pixel_put(*x, *y,
-    //             get_pixel(&g_values.t_n, g_values.norm_printf_map.texX, g_values.norm_printf_map.texY));
-    //     }
-        // else
-        // {
-        //     if (g_values.norm_printf_map.stepY > 0)
-        //         my_mlx_pixel_put(*x, *y,
-        //         get_pixel(&g_values.t_e, g_values.norm_printf_map.texX, g_values.norm_printf_map.texY));
-        //     else
-        //         my_mlx_pixel_put(*x, *y,
-        //         get_pixel(&g_values.t_w, g_values.norm_printf_map.texX, g_values.norm_printf_map.texY));
-        // }
-	// if (*y > g_values.norm_printf_map.drawEnd && *y < g_values.p.res_l)
-	// 	my_mlx_pixel_put(*x, *y, g_values.p.floore_color);
-    printf("x - %d, y - %d\n", *x, *y);
-}
-
-
 
 int drawFrame()
 {
@@ -180,68 +196,75 @@ int drawFrame()
     int x = 0;
     while (x < g_values.screen_width)
     {
-        g_values.norm_printf_map.cameraX = 2 * x / (double)g_values.screen_width - 1;
-        g_values.norm_printf_map.rayDirX = dirX + planeX * g_values.norm_printf_map.cameraX;
-        g_values.norm_printf_map.rayDirY = dirY + planeY * g_values.norm_printf_map.cameraX;
-        g_values.norm_printf_map.mapX = (int)posX;
-        g_values.norm_printf_map.mapY = (int)posY;
+        double cameraX = 2 * x / (double)g_values.screen_width - 1;
+        double rayDirX = dirX + planeX * cameraX;
+        double rayDirY = dirY + planeY * cameraX;
+        int mapX = (int)posX;
+        int mapY = (int)posY;
+        double sideDistX;
+        double sideDistY;
         
+        int stepX;
+        int stepY;
+        int hit = 0;
+        int side;
+        double deltaDistX = (rayDirY == 0) ? 0 : ((rayDirX == 0) ? 1 : fabs(1 / rayDirX));
+        double deltaDistY = (rayDirX == 0) ? 0 : ((rayDirY == 0) ? 1 : fabs(1 / rayDirY));
+        double perpWallDist;
         
-        g_values.norm_printf_map.deltaDistX = (g_values.norm_printf_map.rayDirY == 0) ? 0 : ((g_values.norm_printf_map.rayDirX == 0) ? 1 : fabs(1 / g_values.norm_printf_map.rayDirX));
-        g_values.norm_printf_map.deltaDistY = (g_values.norm_printf_map.rayDirX == 0) ? 0 : ((g_values.norm_printf_map.rayDirY == 0) ? 1 : fabs(1 / g_values.norm_printf_map.rayDirY));
-        
-        if (g_values.norm_printf_map.rayDirX < 0)
+        if (rayDirX < 0)
         {
-            g_values.norm_printf_map.stepX = -1;
-            g_values.norm_printf_map.sideDistX = (posX - g_values.norm_printf_map.mapX) * g_values.norm_printf_map.deltaDistX;
+            stepX = -1;
+            sideDistX = (posX - mapX) * deltaDistX;
         }
         else
         {
-            g_values.norm_printf_map.stepX = 1;
-            g_values.norm_printf_map.sideDistX = (g_values.norm_printf_map.mapX + 1.0 - posX) * g_values.norm_printf_map.deltaDistX;
+            stepX = 1;
+            sideDistX = (mapX + 1.0 - posX) * deltaDistX;
         }
-        if (g_values.norm_printf_map.rayDirY < 0)
+        if (rayDirY < 0)
         {
-            g_values.norm_printf_map.stepY = -1;
-            g_values.norm_printf_map.sideDistY = (posY - g_values.norm_printf_map.mapY) * g_values.norm_printf_map.deltaDistY;
+            stepY = -1;
+            sideDistY = (posY - mapY) * deltaDistY;
         }
         else
         {
-            g_values.norm_printf_map.stepY = 1;
-            g_values.norm_printf_map.sideDistY = (g_values.norm_printf_map.mapY + 1.0 - posY) * g_values.norm_printf_map.deltaDistY;
+            stepY = 1;
+            sideDistY = (mapY + 1.0 - posY) * deltaDistY;
         }
-        while (g_values.norm_printf_map.hit == 0)
+        while (hit == 0)
         {
             //jump to next map square, OR in x-direction, OR in y-direction
-            if (g_values.norm_printf_map.sideDistX < g_values.norm_printf_map.sideDistY)
+            if (sideDistX < sideDistY)
             {
-                g_values.norm_printf_map.sideDistX += g_values.norm_printf_map.deltaDistX;
-                g_values.norm_printf_map.mapX += g_values.norm_printf_map.stepX;
-                g_values.norm_printf_map.side = 0;
+                sideDistX += deltaDistX;
+                mapX += stepX;
+                side = 0;
             }
             else
             {
-                g_values.norm_printf_map.sideDistY += g_values.norm_printf_map.deltaDistY;
-                g_values.norm_printf_map.mapY += g_values.norm_printf_map.stepY;
-                g_values.norm_printf_map.side = 1;
+                sideDistY += deltaDistY;
+                mapY += stepY;
+                side = 1;
             }
             //Check if ray has hit a wall
-            if (g_values.matrix.worldMap[g_values.norm_printf_map.mapX][g_values.norm_printf_map.mapY] > '0') 
-                g_values.norm_printf_map.hit = 1;
+            if (g_values.matrix.worldMap[mapX][mapY] > '0') 
+                hit = 1;
         }
-
-        if (g_values.norm_printf_map.side == 0) g_values.norm_printf_map.perpWallDist = (g_values.norm_printf_map.mapX - posX + (1 - g_values.norm_printf_map.stepX) / 2) / g_values.norm_printf_map.rayDirX;
-        else          g_values.norm_printf_map.perpWallDist = (g_values.norm_printf_map.mapY - posY + (1 - g_values.norm_printf_map.stepY) / 2) / g_values.norm_printf_map.rayDirY;
-
-        // printf("%f\n", g_values.norm_printf_map.perpWallDist);
-        g_values.norm_printf_map.lineHeight = (int)(g_values.screen_height / g_values.norm_printf_map.perpWallDist);
+        if (side == 0) perpWallDist = (mapX - posX + (1 - stepX) / 2) / rayDirX;
+        else           perpWallDist = (mapY - posY + (1 - stepY) / 2) / rayDirY;
+        
+        int lineHeight = (int)(g_values.screen_height/ perpWallDist);
         // printf("%d\n", lineHeight);
 
         //calculate lowest and highest pixel to fill in current stripe
-        g_values.norm_printf_map.drawStart = (-1 * g_values.norm_printf_map.lineHeight) / 2 + g_values.screen_height / 2;
-        if(g_values.norm_printf_map.drawStart < 0) g_values.norm_printf_map.drawStart = 0;
-        g_values.norm_printf_map.drawEnd = g_values.norm_printf_map.lineHeight / 2 + g_values.screen_height/ 2;
-        if(g_values.norm_printf_map.drawEnd >= g_values.screen_height) g_values.norm_printf_map.drawEnd = g_values.screen_height - 1;
+        int drawStart = (-1 * lineHeight) / 2 + g_values.screen_height/ 2;
+        if(drawStart < 0)drawStart = 0;
+        int drawEnd = lineHeight / 2 + g_values.screen_height/ 2;
+        if(drawEnd >= g_values.screen_height)drawEnd = g_values.screen_height- 1;
+        // if(g_values.norm_printf_map.drawEnd < 0) g_values.norm_printf_map.drawEnd = 0;
+
+        // printf("%d - %d\n", g_values.norm_printf_map.drawStart, g_values.norm_printf_map.drawEnd);
 
             // int color;
             // switch(g_values.matrix.worldMap[g_values.norm_printf_map.mapX][g_values.norm_printf_map.mapY])
@@ -268,53 +291,132 @@ int drawFrame()
 
             // if (g_values.norm_printf_map.side == 1) {color = color / 2;}
 
-            // int texNum = (g_values.matrix.worldMap[mapX][mapY] - '0') - 1; //1 subtracted from it so that texture 0 can be used!
+        int texNum = (g_values.matrix.worldMap[g_values.norm_printf_map.mapX][g_values.norm_printf_map.mapY] - '0') - 1; //1 subtracted from it so that texture 0 can be used!
 
-            // // //calculate value of wallX
-        //    g_values.norm_printf_map.wallX; //where exactly the wall was hit
-        //     if (g_values.norm_printf_map.side == 0) g_values.norm_printf_map.wallX = posY + g_values.norm_printf_map.perpWallDist * g_values.norm_printf_map.rayDirY;
-        //     else           g_values.norm_printf_map.wallX = posX + g_values.norm_printf_map.perpWallDist * g_values.norm_printf_map.rayDirX;
-        //     g_values.norm_printf_map.wallX -= floor(g_values.norm_printf_map.wallX);
+      //calculate value of wallX
+      double wallX; //where exactly the wall was hit
+      if (side == 0) wallX = posY + perpWallDist * rayDirY;
+      else           wallX = posX + perpWallDist * rayDirX;
+      wallX -= floor((wallX));
+
+      //x coordinate on the texture
+      int texX = (int)(wallX * (double)g_values.texWidth);
+      if(side == 0 && rayDirX > 0) texX = g_values.texWidth - texX - 1;
+      if(side == 1 && rayDirY < 0) texX = g_values.texWidth - texX - 1;
 
 
-        //     // // //x coordinate on the texture
-        //     g_values.norm_printf_map.texX = (int)(g_values.norm_printf_map.wallX * (double)(g_values.texWidth));
-        //     if(g_values.norm_printf_map.side == 0 && g_values.norm_printf_map.rayDirX > 0) g_values.norm_printf_map.texX = g_values.texWidth - g_values.norm_printf_map.texX - 1;
-        //     if(g_values.norm_printf_map.side == 1 && g_values.norm_printf_map.rayDirY < 0) g_values.norm_printf_map.texX = g_values.texWidth - g_values.norm_printf_map.texX - 1;
-        //     g_values.norm_printf_map.texPos = (g_values.norm_printf_map.drawStart - g_values.screen_height / 2 + g_values.norm_printf_map.lineHeight / 2) * g_values.norm_printf_map.step;
-        //     g_values.norm_printf_map.step = 1.0 * g_values.texHeight / g_values.norm_printf_map.lineHeight;
-            // // Starting texture coordinate
-           
-
-            // // // printf("%d\n", drawStart);
-            // for(int y = drawStart; y<drawEnd; y++)
-            // {
-            //     // Cast the texture coordinate to integer, and mask with (texHeight - 1) in case of overflow
-            //     int texY = (int)texPos & (g_values.texHeight - 1);
-            //     texPos += step;
-            //     unsigned int color = g_values.texture[texNum][g_values.texHeight * texY + texX];
-            //     //make color darker for y-sides: R, G and B byte each divided through two with a "shift" and an "and"
-            //     if(side == 1) color = (color >> 1) & 8355711;
-            //     buffer[y][x] = color;
-            //     // my_mlx_pixel_put(&g_values.image,x, y, color);
-
-            // }
-             
-            // verLine(x, g_values.norm_printf_map.drawStart, g_values.norm_printf_map.drawEnd, color); 
-            // drawBuffer(x, drawStart, drawEnd, buffer);
-                   
-            for (int i = 0; i < g_values.screen_height; i++)
-            {
-                    // printf("%d - %d\n", x, i);
-                if(i >= g_values.norm_printf_map.drawStart && i < g_values.norm_printf_map.drawEnd)
-                {
-                    my_mlx_pixel_put(g_values.image, i, 0x00ff0000);
-                }
-            }
-            
-            // for (int y = 0; y < g_values.screen_height; y++)
-			//     side_world(&x, &y);
+        // // // //x coordinate on the texture
+        // // Starting texture coordinate
         
+
+
+        g_values.norm_printf_map.drawStart = drawStart;
+        g_values.norm_printf_map.drawEnd = drawEnd;
+        // g_values.norm_printf_map.texX = texX;
+        // int texX = (int)(g_values.norm_printf_map.wallX * (double)(g_values.texWidth));
+        // if(g_values.norm_printf_map.side == 0 && g_values.norm_printf_map.rayDirX > 0) texX = g_values.texWidth - texX - 1;
+        // if(g_values.norm_printf_map.side == 1 && g_values.norm_printf_map.rayDirY < 0) texX = g_values.texWidth - texX - 1;
+        // g_values.norm_printf_map.step = 1.0 * g_values.texHeight / g_values.norm_printf_map.lineHeight;
+        // g_values.norm_printf_map.texPos = (g_values.norm_printf_map.drawStart - g_values.screen_height / 2 + g_values.norm_printf_map.lineHeight / 2) * g_values.norm_printf_map.step;
+        
+        
+
+		double step = 1.0 * g_values.texHeight / lineHeight;
+        // Starting texture coordinate
+        double texPos = (drawStart - g_values.screen_height / 2 + lineHeight / 2) * step;
+        for (int y = 0; y < drawStart; y++)
+            my_mlx_pixel_put(&g_values.image, x, y, g_values.p.ceilling_color);
+        for (int y = drawStart; y<drawEnd; y++)
+        {
+            // Cast the texture coordinate to integer, and mask with (texHeight - 1) in case of overflow
+            int texY = (int)texPos & (g_values.texHeight - 1);
+            texPos += step;
+            int color = 0;
+            // printf("x - %d, y - %d\n", texX, texY);
+            if (g_values.norm_printf_map.side == 1)
+            {
+                if (g_values.norm_printf_map.stepY > 0)
+                    color = get_pixel(&g_values.t_e, texX, texY);
+                else
+                    color = get_pixel(&g_values.t_n, texX, texY);
+            }
+            else
+            {
+                if (g_values.norm_printf_map.stepY > 0)
+                    color = get_pixel(&g_values.t_e, texX, texY);
+                else
+                    color = get_pixel(&g_values.t_w, texX, texY);
+            }
+            my_mlx_pixel_put(&g_values.image, x, y, color);
+            //make color darker for y-sides: R, G and B byte each divided through two with a "shift" and an "and"
+            // if(side == 1) color = (color >> 1) & 8355711;
+            // buffer[y][x] = color;
+        }
+        for (int y = drawEnd; y < g_values.screen_height; y++)
+            my_mlx_pixel_put(&g_values.image, x, y, g_values.p.floore_color);
+
+        // // // printf("%d\n", drawStart);
+        // for(int y = 0; y < g_values.screen_height; y++)
+        // {
+        //     // if (y < 5)
+        //     // {
+        //     //     if (x == 0)
+        //     //     {
+        //     //     }
+        //     // }
+        //     // Cast the texture coordinate to integer, and mask with (texHeight - 1) in case of overflow
+        //     int texY = (int)g_values.norm_printf_map.texPos & (g_values.texHeight - 1);
+        //     g_values.norm_printf_map.texPos += g_values.norm_printf_map.step;
+        //     // unsigned int color = g_values.texture[texNum][g_values.texHeight * g_values.norm_printf_map.texY + texX];
+
+        //     // printf("x - %d, y - %d\n", texX, texY);
+            
+        //     if (y < g_values.norm_printf_map.drawStart)
+        //         my_mlx_pixel_put(&g_values.image, x, y, g_values.p.ceilling_color);
+        //     if (y >= g_values.norm_printf_map.drawStart && y <= g_values.norm_printf_map.drawEnd)
+        //     {
+        //         texY = (int)g_values.norm_printf_map.texPos & (g_values.texHeight - 1);
+        //         g_values.norm_printf_map.texPos += g_values.norm_printf_map.step;
+        //         if (g_values.norm_printf_map.side == 1)
+        //         {
+        //             if (g_values.norm_printf_map.stepY > 0)
+        //                 my_mlx_pixel_put(&g_values.image, x, y,
+        //                 get_pixel(&g_values.t_n, texX, texY));
+        //             else
+        //                 my_mlx_pixel_put(&g_values.image, x, y,
+        //                 get_pixel(&g_values.t_n, texX, texY));
+        //         }
+        //         else
+        //         {
+        //             if (g_values.norm_printf_map.stepY > 0)
+        //                 my_mlx_pixel_put(&g_values.image, x, y,
+        //                 get_pixel(&g_values.t_e, texX, texY));
+        //             else
+        //                 my_mlx_pixel_put(&g_values.image, x, y,
+        //                 get_pixel(&g_values.t_w, texX, texY));
+        //         }
+        //     }
+        //     if (y > g_values.norm_printf_map.drawEnd && y < g_values.p.res_l)
+        //         my_mlx_pixel_put(&g_values.image, x, y, g_values.p.floore_color);
+        //     // my_mlx_pixel_put(&g_values.image,x, y, color);
+        // }
+            
+        // verLine(x, g_values.norm_printf_map.drawStart, g_values.norm_printf_map.drawEnd, color); 
+        // drawBuffer(x, drawStart, drawEnd, buffer);
+                
+        // for (int i = 0; i < g_values.screen_height; i++)
+        // {
+        //     if(i >= drawStart && i <= drawEnd)
+        //     {
+        //         my_mlx_pixel_put(&g_values.image, x, i, 0x00ff0000);
+        //     }
+        // }
+        // g_values.norm_printf_map.texY = texY;
+
+        // for (int y = 0; y < g_values.screen_height; y++)
+        // printf("%d - %d\n", drawStart, drawEnd);
+        // if (x > 300)
+        //     exit(0);
         x++;
     }
     
@@ -326,6 +428,7 @@ int drawFrame()
 int func(struct s_values *s)
 {
     key_hook();
+    clear_screen();
     drawFrame();
     mlx_put_image_to_window(s->mlx_ptr, s->mlx_win_ptr, s->image.ptr, 0, 0);
     mlx_do_sync(s->mlx_ptr);
@@ -336,7 +439,6 @@ int main()
     globs_init();
     g_values.mlx_ptr = mlx_init();
     g_values.mlx_win_ptr = mlx_new_window(g_values.mlx_ptr, g_values.screen_width, g_values.screen_height, "cub3d test");
-
     matrix_parser("maps/map.cub");
     get_sprite();
     g_values.image.ptr = mlx_new_image(g_values.mlx_ptr, g_values.screen_width, g_values.screen_height);

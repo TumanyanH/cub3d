@@ -144,7 +144,7 @@ void	        get_sprite_norm();
 void	        get_sprite();
 void	        error(char *str);
 
-void            my_mlx_pixel_put(t_image data, int x, int y, rgb color);
+void            my_mlx_pixel_put(t_image *data, int x, int y, rgb color);
 rgb				get_pixel(t_data *data, int x, int y);
 
 #endif
