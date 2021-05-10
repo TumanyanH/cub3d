@@ -96,8 +96,10 @@ typedef struct  s_image {
 typedef struct      s_keys {
     int             up;
     int             down;
-    int             left;
-    int             right;
+	int 			left;
+	int 			right;
+    int             rot_left;
+    int             rot_right;
 }                   t_keys;
 
 typedef	struct		s_data
@@ -146,5 +148,5 @@ void	        error(char *str);
 
 void            my_mlx_pixel_put(t_image *data, int x, int y, rgb color);
 rgb				get_pixel(t_data *data, int x, int y);
-
+int 			win_close();
 #endif
