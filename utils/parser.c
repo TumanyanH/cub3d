@@ -24,6 +24,43 @@ char **count_height(int fd)
     return (matrix);
 }
 
+int parse_opts(int fd)
+{
+    char *line;
+    int ret;
+    char *stop;
+    char *num_str;
+    int i = 0;
+
+    // while ((ret = get_next_line(fd, &line)) > 0)
+    // {
+        ret = get_next_line(fd, &line);
+        num_str = malloc(sizeof(char) * (ft_strlen(line) + 1));
+        if (ft_strchr(line, 'R') && *(stop = (ft_strchr(line, 'R') + 1)) == ' ')
+        {
+            ++stop;
+            while (*stop != '\0' && ft_isdigit(*stop))
+            {
+                num_str[i++] = *stop;
+                ++stop;
+            }
+            num_str[i] = '\0';
+            g_values.screen_width = ft_atoi(num_str);
+            if (*stop == ' ' && ft_isdigit(*(++stop)))
+            {
+                i = 0;
+                while (*stop != '\0' && ft_isdigit(*stop))
+                    num_str[i++] = *(stop++);
+            }
+            num_str[i] = '\0';
+            g_values.screen_height = ft_atoi(num_str);
+        }
+    // }
+    // free(num_str);
+    return 1;
+}
+
+
 void matrix_parser(char *filepath)
 {
     char *line = NULL;
@@ -34,6 +71,8 @@ void matrix_parser(char *filepath)
     worldMatrix = count_height(fd);
     close(fd);
     fd = open(filepath, O_RDWR|O_CREAT, 0666);
+    parse_opts(fd);
+    printf("%d %d\n", g_values.screen_width, g_values.screen_height);
     while ((res = get_next_line(fd, &line)) > 0)
     {
         j = 0;
@@ -96,6 +135,7 @@ void matrix_parser(char *filepath)
     }
     matrix_checker();
 }
+
 
 int is_space(char c)
 {

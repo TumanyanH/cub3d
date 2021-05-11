@@ -2,8 +2,8 @@
 
 void globs_init()
 {
-    g_values.screen_width = 1920;
-    g_values.screen_height = 1080;
+    g_values.screen_width = 600;
+    g_values.screen_height = 400;
     g_values.texWidth = 64;
     g_values.texHeight = 64;
     g_values.p.ceilling_color = 0x00ADD8E6;
