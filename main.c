@@ -279,8 +279,8 @@ int func(struct s_values *s)
 int main()
 {
     globs_init();
-    matrix_parser("maps/map.cub");
     g_values.mlx_ptr = mlx_init();
+    matrix_parser("maps/map.cub");
     g_values.mlx_win_ptr = mlx_new_window(g_values.mlx_ptr, g_values.screen_width, g_values.screen_height, "cub3d test");
     get_sprite();
     g_values.image.ptr = mlx_new_image(g_values.mlx_ptr, g_values.screen_width, g_values.screen_height);

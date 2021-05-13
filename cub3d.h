@@ -82,6 +82,7 @@ typedef struct s_matrix
     char **worldMap;
     int matrixWidth;
     int matrixHeight;
+	int rows_count;
 } t_matrix;
 
 
@@ -111,6 +112,18 @@ typedef	struct		s_data
 	int				endian;
 }					t_data;
 
+
+typedef struct 		s_p_flags {
+	int 			res;
+	int 			tex_n;
+	int 			tex_w;
+	int 			tex_e;
+	int 			tex_s;
+	int 			spr;
+	int 			ceiling;
+	int 			floor;
+} 					t_p_flags;
+
 struct              s_values
 {
     void                *mlx_ptr;
@@ -135,6 +148,7 @@ struct              s_values
 	t_data			    data;
     t_parser		    p;
     t_norm_print_map    norm_printf_map;
+	t_p_flags			parser_flags;
 }                   g_values;
 
 void            globs_init();

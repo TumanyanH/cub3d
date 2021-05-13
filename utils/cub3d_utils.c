@@ -16,6 +16,14 @@ void globs_init()
     g_values.currents.planeY = 0.66;
     g_values.moveSpeed = 0.1;
     g_values.rotSpeed = 0.05;
+    g_values.parser_flags.res = 0;
+    g_values.parser_flags.tex_e = 0;
+    g_values.parser_flags.tex_s = 0;
+    g_values.parser_flags.tex_w = 0;
+    g_values.parser_flags.tex_n = 0;
+    g_values.parser_flags.spr = 0;
+    g_values.parser_flags.ceiling = 0;
+    g_values.parser_flags.floor = 0;
     g_values.p.nor_tex = "./imgs/1.xpm";
     g_values.p.sou_tex = "./imgs/1.xpm";
     g_values.p.wes_tex = "./imgs/1.xpm";

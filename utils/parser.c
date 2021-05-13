@@ -1,5 +1,12 @@
 # include "../cub3d.h"
 
+int is_space(char c)
+{
+    if(c == ' ' || c == '\n' || c == '\t'|| c == '\v'|| c == '\r'|| c == '\f')
+        return (1);
+    return (0);
+}
+
 char **count_height(int fd)
 {
     int res = 0;
@@ -24,40 +31,155 @@ char **count_height(int fd)
     return (matrix);
 }
 
-int parse_opts(int fd)
+int exists(const char *fname)
 {
-    char *line;
+    int file;
+    if ((file = open(fname, O_RDONLY, 0666)))
+    {
+        close(file);
+        return 1;
+    }
+    return 0;
+}
+
+int resolution(char *stop)
+{
+    char* num_str = malloc(ft_strlen(stop) * (sizeof(char) + 1));
+    int i = 0;
+    while (*stop != '\0' && ft_isdigit(*stop))
+    {
+        num_str[i++] = *stop;
+        ++stop;
+    }
+    num_str[i] = '\0';
+    g_values.screen_width = ft_atoi(num_str);
+    if (*stop == ' ' && ft_isdigit(*(++stop)))
+    {
+        i = 0;
+        while (*stop != '\0' && ft_isdigit(*stop))
+            num_str[i++] = *(stop++);
+    }
+    num_str[i] = '\0';
+    g_values.screen_height = ft_atoi(num_str);
+    while (*stop != '\0')
+    {
+        if (is_space(*stop))
+            ++stop;
+        else
+            error("Wrong resolution parameters");
+    }
+    return 1;
+}
+
+void texture(char **dest, char *stop)
+{
+    char *file_path;
+    int i = 0;
+
+    while (is_space(*stop))
+        ++stop;
+    file_path = malloc((ft_strlen(stop) + 1) * sizeof(char));
+    while (stop[i] && !is_space(stop[i]))
+    {
+        file_path[i] = stop[i];
+        // printf("%d - %c\n", i, temp[i]);
+        ++i;
+    }
+    file_path[i] = '\0';
+    if (file_path[ft_strlen(file_path) - 1] != 'm' || file_path[ft_strlen(file_path) - 2] != 'p' || file_path[ft_strlen(file_path) - 3] != 'x' || file_path[ft_strlen(file_path) - 4] != '.')
+        error("Wrong texture file format!");
+    if (!exists(file_path))
+    {
+        printf("Texture file for %s doesn't exist", file_path);
+        exit(1);
+    }
+    *dest = file_path;
+}
+
+int parse_opts(char *line)
+{
     int ret;
     char *stop;
     char *num_str;
     int i = 0;
 
-    // while ((ret = get_next_line(fd, &line)) > 0)
-    // {
-        ret = get_next_line(fd, &line);
-        num_str = malloc(sizeof(char) * (ft_strlen(line) + 1));
-        if (ft_strchr(line, 'R') && *(stop = (ft_strchr(line, 'R') + 1)) == ' ')
-        {
-            ++stop;
-            while (*stop != '\0' && ft_isdigit(*stop))
-            {
-                num_str[i++] = *stop;
-                ++stop;
-            }
-            num_str[i] = '\0';
-            g_values.screen_width = ft_atoi(num_str);
-            if (*stop == ' ' && ft_isdigit(*(++stop)))
-            {
-                i = 0;
-                while (*stop != '\0' && ft_isdigit(*stop))
-                    num_str[i++] = *(stop++);
-            }
-            num_str[i] = '\0';
-            g_values.screen_height = ft_atoi(num_str);
-        }
-    // }
+    int screenX = 0, screenY = 0;
+
+    mlx_get_screen_size(g_values.mlx_ptr, &screenX, &screenY);
+    // ret = get_next_line(fd, &line);
+    num_str = malloc(sizeof(char) * (ft_strlen(line) + 1));
+    while (is_space(line[i]) && line[i] != '\0')
+        i++;
+    if (line[i] == 'R' && *(stop = (ft_strchr(line, 'R') + 1)) == ' ')
+    {
+        ++stop;
+        resolution(stop);
+        g_values.parser_flags.res = 1;
+    } 
+    else if (line[i] == 'N' && line[i + 1] == 'O' && *(stop = (ft_strchr(line, 'N') + 2)) == ' ')
+    {
+        stop += 2;
+        texture(&g_values.p.nor_tex, stop);
+        g_values.parser_flags.tex_n = 1;
+    }
+    else if (line[i] == 'S' && line[i + 1] == 'O' && *(stop = (ft_strchr(line, 'S') + 2)) == ' ')
+    {
+        stop += 2;
+        texture(&g_values.p.sou_tex, stop);
+        g_values.parser_flags.tex_s = 1;
+    }
+    else if (line[i] == 'E' && line[i + 1] == 'A' && *(stop = (ft_strchr(line, 'E') + 2)) == ' ')
+    {
+        stop += 2;
+        texture(&g_values.p.eas_tex, stop);
+        g_values.parser_flags.tex_e = 1;
+    }
+    else if (line[i] == 'W' && line[i + 1] == 'E' && *(stop = (ft_strchr(line, 'W') + 2)) == ' ')
+    {
+        stop += 2;
+        texture(&g_values.p.wes_tex, stop);
+        g_values.parser_flags.tex_w = 1;
+    }
+    else if (line[i] == 'S' && *(stop = (ft_strchr(line, 'S') + 1)) == ' ')
+    {
+        ++stop;
+        texture(&g_values.p.spr_tex, stop);
+        g_values.parser_flags.spr = 1;
+    }
+    else if (line[i] == 'F' && *(stop = (ft_strchr(line, 'F') + 1)) == ' ')
+    {
+        ++stop;
+        g_values.parser_flags.floor = 1;
+    }
+    else if (line[i] == 'C' && *(stop = (ft_strchr(line, 'C') + 1)) == ' ')
+    {
+        ++stop;
+        g_values.parser_flags.ceiling = 1;
+    }
+    else if (is_space(line[i]) || line[i] == '\0')
+    {
+        ++stop;
+    }
+    else 
+    {
+        error("wrong parameter");
+    }
+    g_values.screen_width = (g_values.screen_width < screenX) ? g_values.screen_width : screenX;
+    g_values.screen_height = (g_values.screen_height < screenY) ? g_values.screen_height : screenY;
     // free(num_str);
     return 1;
+}
+
+int check_parser_flags()
+{
+    return (g_values.parser_flags.res 
+            && g_values.parser_flags.tex_e
+            && g_values.parser_flags.tex_w
+            && g_values.parser_flags.tex_s
+            && g_values.parser_flags.tex_n
+            && g_values.parser_flags.spr
+            && g_values.parser_flags.ceiling
+            && g_values.parser_flags.floor);
 }
 
 
@@ -71,8 +193,11 @@ void matrix_parser(char *filepath)
     worldMatrix = count_height(fd);
     close(fd);
     fd = open(filepath, O_RDWR|O_CREAT, 0666);
-    parse_opts(fd);
-    printf("%d %d\n", g_values.screen_width, g_values.screen_height);
+    while ((res = get_next_line(fd, &line)) && check_parser_flags() != 1)
+    {
+        parse_opts(line);
+        g_values.matrix.rows_count++;
+    }
     while ((res = get_next_line(fd, &line)) > 0)
     {
         j = 0;
@@ -137,13 +262,6 @@ void matrix_parser(char *filepath)
 }
 
 
-int is_space(char c)
-{
-    if(c == ' ' || c == '\n' || c == '\t'|| c == '\v'|| c == '\r'|| c == '\f')
-        return (1);
-    return (0);
-}
-
 int matrix_checker()
 {
     char **vm = g_values.matrix.worldMap;
@@ -165,10 +283,11 @@ int matrix_checker()
     }
     //int i = 1 ,j = 1;
 
-    for (int i = 1; i < g_values.matrix.matrixHeight - 1; ++i)
+    for (int i = 1; i < g_values.matrix.matrixHeight - g_values.matrix.rows_count- 1; ++i)
     {
         for (int j = 1; j < g_values.matrix.matrixWidth - 1; ++j)
         {
+            // printf("vm[%d][%d] - %c\n", i, j, vm[i][j]);
             if (vm[i][j] == '*')
             {
                 if ((vm[i][j + 1] != '1' && vm[i][j + 1] != '*') || (vm[i + 1][j] != '1' && vm[i + 1][j] != '*'))              
@@ -178,9 +297,9 @@ int matrix_checker()
                 }
 
             }
-            else if (vm[i][j] > '9' || vm[i][j] < '0' || vm [i][j] == '*')
+            else if (vm[i][j] > '9' || vm[i][j] < '0')
             {
-
+                // printf("%d\n\n", g_values.matrix.matrixHeight - 1);
                 printf("Error urish simvol\n");
                 exit(0);
             }
