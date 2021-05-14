@@ -61,20 +61,18 @@ typedef	struct		s_parser
 	char			*spr_tex;
 
 	rgb				floore_color;
-	int				floore_flag;
 
 	rgb				ceilling_color;
-	int				ceilling_flag;
 
-	char			**map;
-
-	char			*playr;
-	int				playr_x;
-	int				playr_y;
-
-	int				size_map;
-
-	int				coll_sprite;
+	//char			**map;
+//
+	//char			*playr;
+	//int				playr_x;
+	//int				playr_y;
+//
+	//int				size_map;
+//
+	//int				coll_sprite;
 }					t_parser;
 
 typedef struct s_matrix
