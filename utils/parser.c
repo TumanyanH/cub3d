@@ -62,12 +62,9 @@ int is_empty(char *line)
 rgb createRGBA(int r, int g, int b, int a)
 {   
     if (r < 256 && g < 256 && b < 256 && a < 256)
-        return ((r & 0xff) << 24) + ((g & 0xff) << 16) + ((b & 0xff) << 8) + (a & 0xff);
+        return ((a & 0xff) << 24) + ((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff);
     else
-    {
-        printf("Wrong RGBA value, every value should be less than 256");
-        exit(0);
-    }
+        error("Wrong RGBA value, every value should be less than 256");
 }
 int resolution(char *stop)
 {
@@ -181,12 +178,10 @@ int parse_opts(char *line)
 {
     int ret;
     char *stop;
-    char *num_str;
     int i = 0;
 
     int screenX = 0, screenY = 0;
     mlx_get_screen_size(g_values.mlx_ptr, &screenX, &screenY);
-    num_str = malloc(sizeof(char) * (ft_strlen(line) + 1));
     while (is_space(line[i]) && line[i] != '\0')
         ++i;
     if (line[i] == 'R' && *(stop = (ft_strchr(line, 'R') + 1)) == ' ' && g_values.parser_flags.res == 0)

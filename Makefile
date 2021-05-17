@@ -12,7 +12,7 @@ SRCS = main.c \
 		utils/sprite.c
 OBJS = ${SRCS:.c=.o}
 COMPILE_FLAGS = -Wall -Wextra -Werror
-MLX_FALGS = -Llibs/minilibx_mms -lmlx -framework OpenGL -framework AppKit
+MLX_FALGS = -lmlx -framework OpenGL -framework AppKit
 MLX_PATH = libs/minilibx_mms/
 MLX = libmlx.dylib
 LIBFT_PATH = libs/libft/

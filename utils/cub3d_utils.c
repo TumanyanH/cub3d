@@ -2,12 +2,8 @@
 
 void globs_init()
 {
-    g_values.screen_width = 0;
-    g_values.screen_height = 0;
     g_values.texWidth = 64;
     g_values.texHeight = 64;
-    g_values.p.ceilling_color = 0x00ADD8E6;
-    g_values.p.floore_color = 0x00000000;
     g_values.currents.posX = 22.0;
     g_values.currents.posY = 11.5;
     g_values.currents.dirX = -1;
@@ -24,14 +20,10 @@ void globs_init()
     g_values.parser_flags.spr = 0;
     g_values.parser_flags.ceiling = 0;
     g_values.parser_flags.floor = 0;
-   //g_values.p.nor_tex = "./imgs/1.xpm";
-   //g_values.p.sou_tex = "./imgs/1.xpm";
-   //g_values.p.wes_tex = "./imgs/1.xpm";
-   //g_values.p.eas_tex = "./imgs/1.xpm";
-   //g_values.p.spr_tex = "./imgs/sprite.xpm";
+    g_values.sprites.count = 0;
 }
 
-void            my_mlx_pixel_put(t_image *data,int x, int y, rgb color)
+void            my_mlx_pixel_put(t_data *data,int x, int y, rgb color)
 {
     char    *dst;
 
@@ -41,6 +33,7 @@ void            my_mlx_pixel_put(t_image *data,int x, int y, rgb color)
 
 int 			win_close()
 {
-    mlx_destroy_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
+    // mlx_destroy_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
     exit(0);
+    return 0;
 }
