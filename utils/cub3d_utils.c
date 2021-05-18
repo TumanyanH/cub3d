@@ -21,6 +21,7 @@ void globs_init()
     g_values.parser_flags.ceiling = 0;
     g_values.parser_flags.floor = 0;
     g_values.sprites.count = 0;
+    g_values.should_save = 0;
 }
 
 void            my_mlx_pixel_put(t_data *data,int x, int y, rgb color)

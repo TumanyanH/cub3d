@@ -9,7 +9,8 @@ SRCS = main.c \
 		utils/get_sprite.c \
 		utils/get_pixel.c \
 		utils/error.c \
-		utils/sprite.c
+		utils/sprite.c \
+		utils/screenshot.c
 OBJS = ${SRCS:.c=.o}
 COMPILE_FLAGS = -Wall -Wextra -Werror
 MLX_FALGS = -lmlx -framework OpenGL -framework AppKit
@@ -25,7 +26,7 @@ LIBFT_FLAGS = -Llibs/libft -lft
 $(NAME) : 	${OBJS}
 			${clft} ${cmlx}
 			${CC} ${SRCS} ${MLX_FALGS} ${LIBFT_FLAGS} -o ${NAME}
-			./cub3d
+			./cub3d maps/map.cub --save
 
 all : ${NAME}
 

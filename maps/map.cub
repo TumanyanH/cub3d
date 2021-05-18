@@ -1,13 +1,13 @@
 R 800 400
 
 NO            ./imgs/serj.xpm
-SO ./imgs/eagle.xpm     
-WE ./imgs/greystone.xpm
-EA ./imgs/purplestone.xpm   
+SO ./imgs/daron.xpm     
+WE ./imgs/shavo.xpm
+EA ./imgs/john.xpm   
 
 S ./imgs/sprite.xpm
-F 0,100,0
-C 90,0,0
+F 0,0,0
+C 255,255,255
 
 
 

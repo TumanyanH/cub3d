@@ -204,16 +204,16 @@ int drawFrame()
             if (side == 0)
             {
                 if (stepX > 0)
-                    color = 0x00000000;
+                    color = get_pixel(&g_values.t_n , texX, texY);
                 else
-                    color = 0x00000000;
+                    color = get_pixel(&g_values.t_s, texX, texY);
             }
             else
             {
                 if (stepY > 0)
-                    color = 0x00000000;
+                    color = get_pixel(&g_values.t_e, texX, texY);
                 else
-                    color = 0x00000000;
+                    color = get_pixel(&g_values.t_w, texX, texY);;
 
             }
             my_mlx_pixel_put(&g_values.image, x, y, color);
@@ -267,41 +267,54 @@ int drawFrame()
             }
       }
     }
-    exit(0);
+    //exit(0);
     return 1;
 }
 
 int func(struct s_values *s)
 {
-    static int a = 0;
     key_hook();
-    printf("1\n");
     clear_screen();
-    printf("2\n");
     drawFrame();
-    printf("3\n");
+    if (g_values.should_save)
+        screenshot();
     mlx_put_image_to_window(s->mlx_ptr, s->mlx_win_ptr, s->image.img, 0, 0);
-    printf("4\n");
     mlx_do_sync(s->mlx_ptr);
-    printf("5\n");
-    printf("iii - %d\n", a);
-    a++;
     return (0);
 }
-int main()
+
+int check_arg2(char *str)
+{
+    int len = ft_strlen(str);
+    return (str[len - 1] == 'b'
+            && str[len - 2] == 'u'
+            && str[len - 3] == 'c'
+            && str[len - 4] == '.');
+}
+
+int main(int argc, char **argv)
 {
     globs_init();
     g_values.mlx_ptr = mlx_init();
-    matrix_parser("maps/map.cub");
-    g_values.mlx_win_ptr = mlx_new_window(g_values.mlx_ptr, g_values.screen_width, g_values.screen_height, "cub3d test");
-    init_sprites();
-    get_sprite();
-    g_values.image.img = mlx_new_image(g_values.mlx_ptr, g_values.screen_width, g_values.screen_height);
-    g_values.image.addr = mlx_get_data_addr(g_values.image.img, &g_values.image.bits_per_pixel, &g_values.image.line_length, &g_values.image.endian);
-    mlx_hook(g_values.mlx_win_ptr, 2, 1L << 0, key_press_hook, &g_values);
-    mlx_hook(g_values.mlx_win_ptr, 3, 1L << 0, key_release_hook, &g_values);
-    mlx_hook(g_values.mlx_win_ptr, 17, 1L << 0, win_close, &g_values);
-    mlx_loop_hook(g_values.mlx_ptr, func, &g_values);
-    mlx_loop(g_values.mlx_ptr);
-    return 0;
-}
+    if (argc == 1)
+        exit(0);
+    //printf("%d, %d\n", check_arg2(argv[1]) , ft_strncmp(argv[2], "--save", 6));
+    if ((argc == 2 && check_arg2(argv[1])) || (argc == 3 && check_arg2(argv[1]) && (ft_strncmp(argv[2], "--save", 6) == 0)))
+    {
+        if (argc == 3 && ft_strncmp(argv[2], "--save", 6) == 0)
+            g_values.should_save = 1;
+        matrix_parser(argv[1]);
+        g_values.mlx_win_ptr = mlx_new_window(g_values.mlx_ptr, g_values.screen_width, g_values.screen_height, "cub3d test");
+        init_sprites();
+        get_sprite();
+        g_values.image.img = mlx_new_image(g_values.mlx_ptr, g_values.screen_width, g_values.screen_height);
+        g_values.image.addr = mlx_get_data_addr(g_values.image.img, &g_values.image.bits_per_pixel, &g_values.image.line_length, &g_values.image.endian);
+        mlx_hook(g_values.mlx_win_ptr, 2, 1L << 0, key_press_hook, &g_values);
+        mlx_hook(g_values.mlx_win_ptr, 3, 1L << 0, key_release_hook, &g_values);
+        mlx_hook(g_values.mlx_win_ptr, 17, 1L << 0, win_close, &g_values);
+        mlx_loop_hook(g_values.mlx_ptr, func, &g_values);
+        printf("fuck\n");
+        mlx_loop(g_values.mlx_ptr);
+        return 0;
+    }
+}          

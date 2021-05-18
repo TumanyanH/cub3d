@@ -112,6 +112,7 @@ struct              s_values
 	t_parser		p;
 	t_p_flags		parser_flags;
 	t_sprite		sprites;
+	int 			should_save;
 }                   g_values;
 
 void            	globs_init();
@@ -124,6 +125,7 @@ void	        	get_sprite();
 void	        	error(char *str);
 void 				init_sprites();
 void 				sort_sprites();
+void 				screenshot();
 
 void            	my_mlx_pixel_put(t_data *data, int x, int y, rgb color);
 rgb					get_pixel(t_data *data, int x, int y);

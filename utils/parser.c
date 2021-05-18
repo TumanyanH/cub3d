@@ -180,8 +180,8 @@ int parse_opts(char *line)
     char *stop;
     int i = 0;
 
-    int screenX = 0, screenY = 0;
-    mlx_get_screen_size(g_values.mlx_ptr, &screenX, &screenY);
+    int screenX = 1500, screenY = 15000;
+    //mlx_get_screen_size(g_values.mlx_ptr, screenX, screenY);
     while (is_space(line[i]) && line[i] != '\0')
         ++i;
     if (line[i] == 'R' && *(stop = (ft_strchr(line, 'R') + 1)) == ' ' && g_values.parser_flags.res == 0)

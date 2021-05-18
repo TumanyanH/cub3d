@@ -37,31 +37,46 @@ int find_greatest()
     return (dist);
 }
 
-void reverse_sprites()
+void bubble_sort()
 {
-    t_sprite_elem *sprites = g_values.sprites.sprites;
-    int count = g_values.sprites.count;
+    int i;
+	int j;
+    float tmp;
 
-    for (int i = 0; i < g_values.sprites.count; ++i)
-        g_values.sprites.sprites[i++] = sprites[--count];
+	i = 1;
+	while (i < g_values.sprites.count)
+	{
+		j = i;
+		while ((int)g_values.sprites.sprites[j].distance > (int)g_values.sprites.sprites[j - 1].distance && j != 0)
+		{
+			// swap_sprite(cub, &j);
+
+            tmp = g_values.sprites.sprites[j - 1].distance;
+            g_values.sprites.sprites[j - 1].distance = g_values.sprites.sprites[j].distance;
+            g_values.sprites.sprites[j].distance = tmp;
+            tmp = g_values.sprites.sprites[j - 1].x;
+            g_values.sprites.sprites[j - 1].x = g_values.sprites.sprites[j].x;
+            g_values.sprites.sprites[j].x = tmp;
+            tmp = g_values.sprites.sprites[j - 1].y;
+            g_values.sprites.sprites[j - 1].y = g_values.sprites.sprites[j].y;
+            g_values.sprites.sprites[j].y = tmp;
+			--j;
+		}
+		++i;
+	}
 }
 
-void sort_sprites()
+void			sort_sprites()
 {
-    t_sprite_elem temp_sprites;
-    double last_dist = find_greatest();
+	int i;
 
-    for (int i = g_values.sprites.count - 2; i >= 0; i--)
-    {
-        for (int j = 0; j <= i; j++)
-        {
-            if (g_values.sprites.sprites[j].distance > g_values.sprites.sprites[j+1].distance)
-            {
-                temp_sprites = g_values.sprites.sprites[j];
-                g_values.sprites.sprites[j] = g_values.sprites.sprites[j+1];
-                g_values.sprites.sprites[j+1] = temp_sprites;
-            }
-        }
-    }
-    reverse_sprites();
+	i = -1;
+	while (++i < g_values.sprites.count)
+	{
+		g_values.sprites.sprites[i].distance = ((g_values.currents.posX - g_values.sprites.sprites[i].x)
+		* (g_values.currents.posX - g_values.sprites.sprites[i].x)
+		+ (g_values.currents.posY - g_values.sprites.sprites[i].y) * (g_values.currents.posY - g_values.sprites.sprites[i].y));
+	}
+	if (g_values.sprites.count > 1)
+		bubble_sort();
 }
