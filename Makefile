@@ -1,8 +1,22 @@
-NAME = cub3d
-CC = gcc
-AR = ar csr
-CP = cp
-SRCS = main.c \
+.PHONY: all clean bonus fclean re
+
+NAME = cub3D
+
+LIBFT_DIR = ./libs/libft
+
+LIBFT = $(LIBFT_DIR)libft.a
+
+LIBMLX_DIR = ./libs/minilibx_mms
+
+LIBMLX = $(LIBMLX_DIR)libmlx.dylib
+
+MAKE = make
+
+CLEAN = clean
+
+FCLEAN = fclean
+
+SRC = main.c \
 		utils/cub3d_utils.c \
 		utils/parser.c \
 		gnl/get_next_line.c \
@@ -11,40 +25,45 @@ SRCS = main.c \
 		utils/error.c \
 		utils/sprite.c \
 		utils/screenshot.c
-OBJS = ${SRCS:.c=.o}
-COMPILE_FLAGS = -Wall -Wextra -Werror
-MLX_FALGS = -lmlx -framework OpenGL -framework AppKit
-MLX_PATH = libs/minilibx_mms/
-MLX = libmlx.dylib
-LIBFT_PATH = libs/libft/
-LIBFT = libft.a
-LIBFT_FLAGS = -Llibs/libft -lft
+	
+OBJ = $(SRC:.c=.o)
 
-# %.o: %.c
-#     $(CC) -Wall -Wextra -Werror -Imlx -c $< -o $@
+CC = gcc
 
-$(NAME) : 	${OBJS}
-			${clft} ${cmlx}
-			${CC} ${SRCS} ${MLX_FALGS} ${LIBFT_FLAGS} -o ${NAME}
-			./cub3d maps/map.cub --save
+FLAG = -Wall -Werror -Wextra -g -O0
 
-all : ${NAME}
+FLAGMLX = -framework OpenGL -framework AppKit
 
-clean :
-	${RM} ${OBJS}
+OPTION = -c -D GL_SILENCE_DEPRECATION
 
-fclean : clean
-	${RM} ${NAME}
+OPTIONOBJ = -o
 
-re : fclean all
+DEL = rm -rf
 
-clft : 
-		@cd $(LIBFT_PATH) && $(MAKE) $(FCLEAN) $(ALL)
-		@mv $(MLX) ../../
+all: $(NAME)
 
-cmlx : 
-		@cd $(MLX_PATH) $(MAKE) $(RE)
-		@mv $(LIBFT) ../../
+$(NAME): $(OBJ) $(LIBFT) $(LIBMLX)
+	@cd $(LIBFT_DIR) && mv ./libft.a ../../
+	@cd $(LIBMLX_DIR) && mv ./libmlx.dylib ../../
+	@$(CC) $(FLAG) $(OBJ) -L. -lmlx -lft $(FLAGSMLX) $(OPTIONOBJ) $(NAME)
 
+$(LIBFT):
+	@cd $(LIBFT_DIR) && $(MAKE)
 
-.PHONY: all clean fclean re .c.o
+$(LIBMLX):
+	@cd $(LIBMLX_DIR) && $(MAKE)
+
+%.o: %.c
+	@$(CC) $(FLAG) $(OPTION) $< $(OPTIONOBJ) $@
+
+clean:
+	@$(DEL) $(OBJ)
+	@cd $(LIBFT_DIR) && $(MAKE) $(CLEAN)
+	@cd $(LIBMLX_DIR) && $(MAKE) $(CLEAN)
+	
+fclean: clean
+	@$(DEL) $(NAME) ./libft.a ./libmlx.dylib
+	@$(DEL) $(OBJ)
+	@cd $(LIBFT_DIR) && $(MAKE) $(FCLEAN)
+	
+re: fclean all

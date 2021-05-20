@@ -8,8 +8,6 @@ int key_hook()
     double dirX = g_values.currents.dirX;
     double dirY = g_values.currents.dirY;
     double moveSpeed = g_values.moveSpeed;
-    g_values.rotSpeed = g_values.rotSpeed;
-    double rotSpeed = g_values.rotSpeed;
     
     if (g_values.keys.up) // w
     {
@@ -77,6 +75,10 @@ int key_release_hook (int pressed_key)
     {
         mlx_destroy_window(g_values.mlx_ptr, g_values.mlx_win_ptr);
         exit(0);
+    }
+    if (pressed_key == 48)
+    {
+        system("afplay ./sounds/wake_up.mp3");
     }
     if (pressed_key == 13) // w
         g_values.keys.up = 0;        
@@ -224,13 +226,16 @@ int drawFrame()
         x++;
     }
     for(int i = 0; i < g_values.sprites.count; i++)
-        g_values.sprites.sprites[i].distance = (pow((posX - g_values.sprites.sprites[i].x), 2.0) + pow((posY - g_values.sprites.sprites[i].y), 2.0));
+    {
+        g_values.sprites.sprites[i]->distance = (pow((posX - g_values.sprites.sprites[i]->x), 2.0) + pow((posY - g_values.sprites.sprites[i]->y), 2.0));
+        // printf("distance is %f\n")
+    }
     sort_sprites();
     for(int i = 0; i < g_values.sprites.count; i++)
     {
       //translate sprite position to relative to camera
-      double spriteX = g_values.sprites.sprites[i].x - posX;
-      double spriteY = g_values.sprites.sprites[i].y - posY;
+      double spriteX = g_values.sprites.sprites[i]->x - posX;
+      double spriteY = g_values.sprites.sprites[i]->y - posY;
 
       double invDet = 1.0 / (planeX * dirY - dirX * planeY); //required for correct matrix multiplication
 
@@ -267,7 +272,6 @@ int drawFrame()
             }
       }
     }
-    //exit(0);
     return 1;
 }
 
@@ -311,9 +315,10 @@ int main(int argc, char **argv)
         g_values.image.addr = mlx_get_data_addr(g_values.image.img, &g_values.image.bits_per_pixel, &g_values.image.line_length, &g_values.image.endian);
         mlx_hook(g_values.mlx_win_ptr, 2, 1L << 0, key_press_hook, &g_values);
         mlx_hook(g_values.mlx_win_ptr, 3, 1L << 0, key_release_hook, &g_values);
+        printf("go to hell if you wanna fail me, I'm on this project for more than 2 months:)))\n"); 
+        printf("BTW, press tab to hear magic\n");
         mlx_hook(g_values.mlx_win_ptr, 17, 1L << 0, win_close, &g_values);
         mlx_loop_hook(g_values.mlx_ptr, func, &g_values);
-        printf("fuck\n");
         mlx_loop(g_values.mlx_ptr);
         return 0;
     }

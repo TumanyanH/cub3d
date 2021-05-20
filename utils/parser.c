@@ -22,7 +22,7 @@ char **count_height(int fd)
     char **matrix;
     while ((res = get_next_line(fd, &line)) > 0)
     {
-        if (max_width < ft_strlen(line))
+        if (max_width < (int)ft_strlen(line))
             max_width = ft_strlen(line);
         count++;
     }
@@ -31,7 +31,6 @@ char **count_height(int fd)
     while (res < count)
         matrix[res++] = (char *)malloc(sizeof(char) * (max_width + 1));
     matrix[res] = NULL;
-    //printf("W - %d, H - %d\n", max_width, count);
     g_values.matrix.matrixWidth = max_width;
     g_values.matrix.matrixHeight = count ;
     return (matrix);
@@ -65,11 +64,14 @@ rgb createRGBA(int r, int g, int b, int a)
         return ((a & 0xff) << 24) + ((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff);
     else
         error("Wrong RGBA value, every value should be less than 256");
+    return 0;
 }
 int resolution(char *stop)
 {
     char* num_str = malloc(ft_strlen(stop) * (sizeof(char) + 1));
     int i = 0;
+    while (is_space(*stop))
+        ++stop;
     while (*stop != '\0' && ft_isdigit(*stop))
     {
         num_str[i++] = *stop;
@@ -106,7 +108,6 @@ void texture(char **dest, char *stop)
     while (stop[i] && !is_space(stop[i]))
     {
         file_path[i] = stop[i];
-        // printf("%d - %c\n", i, temp[i]);
         ++i;
     }
     file_path[i] = '\0';
@@ -176,12 +177,10 @@ int my_rgb(char * line)
 
 int parse_opts(char *line)
 {
-    int ret;
     char *stop;
     int i = 0;
 
     int screenX = 1500, screenY = 15000;
-    //mlx_get_screen_size(g_values.mlx_ptr, screenX, screenY);
     while (is_space(line[i]) && line[i] != '\0')
         ++i;
     if (line[i] == 'R' && *(stop = (ft_strchr(line, 'R') + 1)) == ' ' && g_values.parser_flags.res == 0)
@@ -332,15 +331,6 @@ void matrix_parser(char *filepath)
         }
     }
     g_values.matrix.worldMap = worldMatrix;
-    for (int k = 0; k < i; ++k)
-    {
-        //printf("line number %d ", k + 1);
-        for(int l = 0; l < j; ++l)
-        {
-            printf("%c", g_values.matrix.worldMap[k][l]);
-        }
-        printf("\n");
-    }
     matrix_checker();
 }
 
@@ -352,7 +342,6 @@ int matrix_checker()
     {
         for(int j = 0; j < g_values.matrix.matrixWidth; ++j)
         {
-            //printf("%c - %d, %d\n",vm[i][j], i, j);
             if (vm[0][j] != '1' && vm[0][j] != '*' && vm[g_values.matrix.matrixHeight - 1][j] != '1' && vm[g_values.matrix.matrixHeight - 1][j] != '*' && 
              vm[i][0] != '1' && vm[i][0] != '*' && vm[i][g_values.matrix.matrixWidth - 1] != '1' && vm[i][g_values.matrix.matrixWidth - 1] != '*')
             {
@@ -360,17 +349,16 @@ int matrix_checker()
                 exit(0);
             }
         }
-        //printf("\n");
     }
     
     for (int i = 1; i < g_values.matrix.matrixHeight - g_values.matrix.rows_count - 2; ++i)
     {
         for (int j = 1; j < g_values.matrix.matrixWidth - 1; ++j)
         {
-            //printf("vm[%d][%d] - %c\n", i, j, vm[i][j]);
             if (vm[i][j] == '*')
             {
-                if ((vm[i][j + 1] != '1' && vm[i][j + 1] != '*') || (vm[i + 1][j] != '1' && vm[i + 1][j] != '*'))              
+                if ((vm[i][j + 1] != '1' && vm[i][j + 1] != '*') || (vm[i + 1][j] != '1' && vm[i + 1][j] != '*')
+                || (vm[i - 1][j] != '1' && vm[i - 1][j] != '*')|| (vm[i][j - 1] != '1' && vm[i][j - 1] != '*'))              
                 {
                     printf("Error mapy patov chi shrjapakvac\n");
                     exit(0);
@@ -379,7 +367,6 @@ int matrix_checker()
             }
             else if (vm[i][j] > '9' || vm[i][j] < '0')
             {
-                // printf("%d\n\n", g_values.matrix.matrixHeight - 1);
                 printf("Error urish simvol\n");
                 exit(0);
             }
@@ -389,6 +376,5 @@ int matrix_checker()
             }
         }
     }
-    printf("Chisht matrix\n");
     return 0;
 }

@@ -86,7 +86,7 @@ typedef struct 		s_sprite_elem
 typedef struct 		s_sprite
 {
 	int 			count;
-	t_sprite_elem 	*sprites;
+	t_sprite_elem 	**sprites;
 } 					t_sprite;
 
 struct              s_values
