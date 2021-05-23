@@ -24,7 +24,8 @@ SRC = main.c \
 		utils/get_pixel.c \
 		utils/error.c \
 		utils/sprite.c \
-		utils/screenshot.c
+		utils/screenshot.c \
+		cub3d.c
 	
 OBJ = $(SRC:.c=.o)
 

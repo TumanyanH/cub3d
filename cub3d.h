@@ -35,6 +35,7 @@ typedef	struct		s_parser
 	rgb				ceilling_color;
 
 	int				size_map;
+	int				pos_count;
 }					t_parser;
 
 typedef struct 		s_matrix
@@ -126,6 +127,7 @@ void	        	error(char *str);
 void 				init_sprites();
 void 				sort_sprites();
 void 				screenshot();
+void 				clear_screen();
 
 void            	my_mlx_pixel_put(t_data *data, int x, int y, rgb color);
 rgb					get_pixel(t_data *data, int x, int y);

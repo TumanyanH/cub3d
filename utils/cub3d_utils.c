@@ -4,9 +4,9 @@ void globs_init()
 {
     g_values.texWidth = 64;
     g_values.texHeight = 64;
-    g_values.currents.posX = 22.0;
-    g_values.currents.posY = 11.5;
-    g_values.currents.dirX = -1;
+    g_values.currents.posX = 0;
+    g_values.currents.posY = 0;
+    g_values.currents.dirX = 0;
     g_values.currents.dirY = 0;
     g_values.currents.planeX = 0;
     g_values.currents.planeY = 0.66;
@@ -22,6 +22,7 @@ void globs_init()
     g_values.parser_flags.floor = 0;
     g_values.sprites.count = 0;
     g_values.should_save = 0;
+    g_values.p.pos_count = 0;
 }
 
 void            my_mlx_pixel_put(t_data *data,int x, int y, rgb color)

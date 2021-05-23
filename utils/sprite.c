@@ -38,19 +38,6 @@ void init_sprites()
     fill_sprites();
 }
 
-
-int find_greatest()
-{
-    double dist = 0.0;
-
-    for (int i = 0; i < g_values.sprites.count; ++i)
-    {
-        if (dist < g_values.sprites.sprites[i]->distance)
-            dist = g_values.sprites.sprites[i]->distance;
-    }
-    return (dist);
-}
-
 void bubble_sort()
 {
     int i;
