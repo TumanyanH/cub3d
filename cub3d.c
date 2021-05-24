@@ -121,7 +121,6 @@ int drawFrame()
         }
         for (int y = drawEnd; y < g_values.screen_height; y++)                    
             my_mlx_pixel_put(&g_values.image, x, y, g_values.p.floore_color);
-        // printf("%d - perpWallDist\n",perpWallDist);
         ZBuffer[x] = perpWallDist;
         x++;
     }
@@ -154,26 +153,15 @@ int drawFrame()
         if(drawStartX < 0) drawStartX = 0;
         int drawEndX = spriteWidth / 2 + spriteScreenX;
         if(drawEndX >= g_values.screen_width) drawEndX = g_values.screen_width - 1;
-        // printf("exited with drawStartX%d drawEndX%d\n for sprite[%d]\n", drawStartX, drawEndX, i);
-        // printf("exited with drawStartY%d drawEndY%d\n for sprite[%d]\n", drawStartY, drawEndY, i);
         for(int stripe = drawStartX; stripe < drawEndX; stripe++)
         {
             int texX = (int)(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * g_values.texWidth / spriteWidth) / 256;
-            //printf("selecting texX%d for sprite[%d]\n", texX, i);
-                //             if (i == 0)
-                // printf("i've been wondering if you'd...\n");
-            // if (i == 0)
-            // printf("conditions: %d && %d && %d && %d --- %d\n", transformY > 0, stripe > 0, stripe < g_values.screen_width, transformY < ZBuffer[stripe], ZBuffer[stripe]);
             if(transformY > 0 && stripe > 0 && stripe < g_values.screen_width && transformY < ZBuffer[stripe])
             {
-                // if (i == 0)
-                // printf("hello, it's me...\n");
                 for(int y = drawStartY; y < drawEndY; y++) 
                 {
                     int d = (y) * 256 - g_values.screen_height * 128 + spriteHeight * 128;
                     int texY = ((d * g_values.texHeight) / spriteHeight) / 256;
-                    // if (i == 0)
-                        // printf("selecting texY%d for sprite[%d]\n", texY, i);
                     if (get_pixel(&g_values.t_spr, texX, texY))
                         my_mlx_pixel_put(&g_values.image, stripe, y,  get_pixel(&g_values.t_spr, texX, texY));
                 }

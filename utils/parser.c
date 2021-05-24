@@ -252,6 +252,12 @@ int check_parser_flags()
             && g_values.parser_flags.floor);
 }
 
+int ft_strc(char *string, char c)
+{
+    while (is_space(*string))
+        string++;
+    return (*string == c);
+}
 
 void matrix_parser(char *filepath)
 {
@@ -275,50 +281,58 @@ void matrix_parser(char *filepath)
     fd = open(filepath, O_RDWR|O_CREAT, 0666);
     while ((res = get_next_line(fd, &line)) > 0 )
     {    
-        if(ft_strchr(line, 'R') || ft_strchr(line, 'W') || ft_strchr(line, 'A') || ft_strchr(line, 'E') || ft_strchr(line, 'S') 
-        || ft_strchr(line, 'O') || ft_strchr(line, 'N') || ft_strchr(line, 'F') || is_empty(line) || ft_strchr(line, 'C'))
+        if(ft_strc(line, 'R') || ft_strc(line, 'W') || ft_strc(line, 'E') || ft_strc(line, 'S') 
+         || ft_strc(line, 'N') || ft_strc(line, 'F') || is_empty(line) || ft_strc(line, 'C'))
             continue;
         else
         {
             j = 0;
             while (line[j] != '\0')
             {
-                if (line[j] != '\n')
+                if (line[j] == 'N' || line[j] == 'S' || line[j] == 'E' || line[j] == 'W')
                 {
-                    if (line[j] == 'N' || line[j] == 'S' || line[j] == 'E' || line[j] == 'W')
+                    if (g_values.p.pos_count > 0)
+                        error("More than one player starting position");
+                    ++g_values.p.pos_count;
+                    worldMatrix[i][j] = '0';
+                    g_values.currents.posX = j + 0.5;
+                    g_values.currents.posY = i + 0.5;
+                    switch (line[j])
                     {
-                        worldMatrix[i][j] = '0';
-                        g_values.currents.posX = j;
-                        g_values.currents.posY = i;
-                        switch (line[j])
-                        {
-                        case 'N':
-                            g_values.currents.dirX = 0;
-                            g_values.currents.dirY = 1;
-                            break;
-                        case 'S':
-                            g_values.currents.dirX = 0;
-                            g_values.currents.dirY = -1;
-                            break;
-                        case 'E':
-                            g_values.currents.dirX = 1;
-                            g_values.currents.dirY = 0;
-                            break;
-                        case 'W':
-                            g_values.currents.dirX = -1;
-                            g_values.currents.dirY = 0;
-                            break;
-                        default:
-                            g_values.currents.dirX = 0;
-                            g_values.currents.dirY = 0;
-                            break;
-                        }
+                    case 'S':
+                        g_values.currents.dirX = 0;
+                        g_values.currents.dirY = 1;
+                        g_values.currents.planeX = 0.66;
+                        g_values.currents.planeY = 0;
+                        break;
+                    case 'N':
+                        g_values.currents.dirX = 0;
+                        g_values.currents.dirY = -1;
+                        g_values.currents.planeX = -0.66;
+                        g_values.currents.planeY = 0;
+                        break;
+                    case 'E':
+                        g_values.currents.dirX = 1;
+                        g_values.currents.dirY = 0;
+                        g_values.currents.planeX = 0;
+                        g_values.currents.planeY = 0.66;
+                        break;
+                    case 'W':
+                        g_values.currents.dirX = -1;
+                        g_values.currents.dirY = 0;
+                        g_values.currents.planeX = 0;
+                        g_values.currents.planeY = -0.66;
+                        break;
+                    default:
+                        g_values.currents.dirX = 0;
+                        g_values.currents.dirY = 0;
+                        break;
                     }
-                    else if (line[j] == '0' || line[j] == '1' || line[j] == '2' || line[j] == '3' || line[j] == '4' || line[j] == '5')
-                        worldMatrix[i][j] = line[j];
-                    else if (line[j] == ' ')
-                        worldMatrix[i][j] = '*';
                 }
+                else if (line[j] == '0' || line[j] == '1' || line[j] == '2')
+                    worldMatrix[i][j] = line[j];
+                else if (line[j] == ' ')
+                    worldMatrix[i][j] = '*';
                 ++j;
             }
             while (j < g_values.matrix.matrixWidth)

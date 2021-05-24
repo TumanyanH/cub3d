@@ -9,7 +9,7 @@ void globs_init()
     g_values.currents.dirX = 0;
     g_values.currents.dirY = 0;
     g_values.currents.planeX = 0;
-    g_values.currents.planeY = 0.66;
+    g_values.currents.planeY = 0;
     g_values.moveSpeed = 0.1;
     g_values.rotSpeed = 0.05;
     g_values.parser_flags.res = 0;
