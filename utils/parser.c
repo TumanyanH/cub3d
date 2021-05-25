@@ -79,7 +79,9 @@ int resolution(char *stop)
     }
     num_str[i] = '\0';
     g_values.screen_width = ft_atoi(num_str);
-    if (*stop == ' ' && ft_isdigit(*(++stop)))
+    while (is_space(*stop))
+        ++stop;
+    if (ft_isdigit(*stop))
     {
         i = 0;
         while (*stop != '\0' && ft_isdigit(*stop))
@@ -87,13 +89,8 @@ int resolution(char *stop)
     }
     num_str[i] = '\0';
     g_values.screen_height = ft_atoi(num_str);
-    while (*stop != '\0')
-    {
-        if (is_space(*stop))
-            ++stop;
-        else
-            error("Wrong resolution parameters");
-    }
+    if(*stop)
+        error("Wrong resolution parameters");
     return 1;
 }
 
@@ -114,7 +111,9 @@ void texture(char **dest, char *stop)
     if (file_path[ft_strlen(file_path) - 1] != 'm' || file_path[ft_strlen(file_path) - 2] != 'p' || file_path[ft_strlen(file_path) - 3] != 'x' || file_path[ft_strlen(file_path) - 4] != '.')
         error("Wrong texture file format!");
     if (!exists(file_path))
-        error("Texture file for %s doesn't exist");
+        error("Texture file doesn't exist");
+    if (stop[i])
+        error("Texture format error");
     *dest = file_path;
 }
 
@@ -150,12 +149,8 @@ int my_rgb(char * line)
                             b = b * 10 + (line[i] - '0');
                             ++i;
                         }
-                        while (line[i])
-                        {
-                            if(!is_space(line[i]))
-                                error("Wrong rgb parameters #0");
-                            ++i;
-                        }
+                        if (line[i])
+                            error("Wrong rgb parameters #0");
                     }
                     else 
                      error("Wrong rgb parameters #1"); 
@@ -180,7 +175,8 @@ int parse_opts(char *line)
     char *stop;
     int i = 0;
 
-    int screenX = 1500, screenY = 15000;
+    int screenX , screenY ;
+    mlx_get_screen_size(g_values.mlx_ptr, &screenX, &screenY);
     while (is_space(line[i]) && line[i] != '\0')
         ++i;
     if (line[i] == 'R' && *(stop = (ft_strchr(line, 'R') + 1)) == ' ' && g_values.parser_flags.res == 0)

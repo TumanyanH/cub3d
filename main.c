@@ -142,5 +142,7 @@ int main(int argc, char **argv)
         mlx_loop_hook(g_values.mlx_ptr, func, &g_values);
         mlx_loop(g_values.mlx_ptr);
     }
+    else 
+        error("Wrong input parameters");
     return 0;
 }          
